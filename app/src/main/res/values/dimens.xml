@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sessionColWidth">50dp</dimen>
+    <dimen name="overlayShadowRadius">4</dimen>
+    <dimen name="sessionOverlayTextSize">12sp</dimen>
+    <dimen name="settings_table_bottom_margin">7dp</dimen>
+</resources>
