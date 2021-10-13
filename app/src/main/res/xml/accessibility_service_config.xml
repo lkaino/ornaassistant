@@ -5,5 +5,5 @@
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:canRetrieveWindowContent="true"
-    android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity"
+    android:settingsActivity="com.rockethat.android.accessibility.ServiceSettingsActivity"
     />

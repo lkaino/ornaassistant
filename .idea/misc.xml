@@ -4,12 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3415384615384615" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/drawable/ic_bg.xml" value="0.405" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/drawable/ic_launcher_background.xml" value="0.346875" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.405" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/drawable/ic_logo.xml" value="0.405" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout-night/test_settings.xml" value="0.39140625" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/activity_main.xml" value="0.28492935635792777" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/activity_settings.xml" value="0.3988005997001499" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/fragment_kingdom.xml" value="0.22" />
-        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/fragment_main.xml" value="0.25" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/fragment_main.xml" value="0.33" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/fragment_settings.xml" value="0.75" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/kg_layout.xml" value="0.9505988023952096" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/kg_rv_layout.xml" value="0.67" />
@@ -19,8 +22,10 @@
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/testlayout.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/layout/wayvessel_overlay.xml" value="0.8108552631578947" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/menu/menu.xml" value="0.51640625" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.5" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.405" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/xml/accessibility_service_config.xml" value="0.3307291666666667" />
-        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/xml/main_preference.xml" value="0.3988005997001499" />
+        <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/xml/main_preference.xml" value="0.6483333333333333" />
         <entry key="..\:/Users/jla/AndroidStudioProjects/ornaassistant/app/src/main/res/xml/root_preferences.xml" value="0.5157766990291263" />
       </map>
     </option>

@@ -4,4 +4,7 @@
     <item
         android:id="@+id/item_preference"
         android:title="@string/settings" />
+    <item
+        android:id="@+id/item_version"
+        android:title="Version 1.0.1" />
 </menu>
