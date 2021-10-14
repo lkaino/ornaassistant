@@ -17,6 +17,8 @@ import java.time.LocalDateTime
 import java.util.*
 import com.rockethat.ornaassistant.overlays.KGOverlay
 import com.rockethat.ornaassistant.overlays.SessionOverlay
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 
 
 class MainState(
@@ -36,9 +38,26 @@ class MainState(
     private val mInviterOverlay = InviterOverlay(mWM, mCtx, mNotificationView, 0.8)
     private val mSessionOverlay = SessionOverlay(mWM, mCtx, mSessionView, 0.4)
 
+    private val mSharedPreference: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(mCtx)
+
     @RequiresApi(Build.VERSION_CODES.O)
     var mKGLastUpdated: LocalDateTime = LocalDateTime.now()
     var mSleepers = mutableMapOf<String, Sleeper>()
+
+    var sharedPreferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            when(key){
+                "kg" -> if (!sharedPreferences.getBoolean(key, true)) mKGOverlay.hide()
+                "invites" -> if (!sharedPreferences.getBoolean(key, true))  mInviterOverlay.hide()
+                "session" -> if (!sharedPreferences.getBoolean(key, true)) mSessionOverlay.hide()
+            }
+        }
+
+    init {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx)
+        sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleOrnaData(data: ArrayList<ScreenData>) {
@@ -58,8 +77,9 @@ class MainState(
                         if (mDungeonVisit != null) {
                             mDungeonVisit!!.sessionID = mSession!!.mID
                         }
-                        mSessionOverlay.show()
-                        mSessionOverlay.update(mSession, mDungeonVisit)
+                        if (mSharedPreference.getBoolean("session", true)) {
+                            mSessionOverlay.update(mSession, mDungeonVisit)
+                        }
                         Log.i(TAG, "At wayvessel: $name")
                     }
                 } catch (e: Exception) {
@@ -190,7 +210,9 @@ class MainState(
                         Log.d(TAG, "Entered: $mDungeonVisit")
                     }
 
-                    mSessionOverlay.update(mSession, mDungeonVisit)
+                    if (mSharedPreference.getBoolean("session", true)) {
+                        mSessionOverlay.update(mSession, mDungeonVisit)
+                    }
                 }
                 OrnaViewUpdateType.DUNGEON_MODE_CHANGED -> {
                     if (mDungeonVisit != null) {
@@ -210,31 +232,43 @@ class MainState(
                 OrnaViewUpdateType.DUNGEON_EXPERIENCE -> {
                     if (mDungeonVisit != null) mDungeonVisit!!.experience += data as Int
                     if (mSession != null) mSession!!.experience += data as Int
-                    mSessionOverlay.update(mSession, mDungeonVisit)
+                    if (mSharedPreference.getBoolean("session", true)) {
+                        mSessionOverlay.update(mSession, mDungeonVisit)
+                    }
                 }
                 OrnaViewUpdateType.DUNGEON_ORNS -> {
                     if (mDungeonVisit != null) mDungeonVisit!!.orns += data as Int
                     if (mSession != null) mSession!!.orns += data as Int
-                    mSessionOverlay.update(mSession, mDungeonVisit)
+                    if (mSharedPreference.getBoolean("session", true)) {
+                        mSessionOverlay.update(mSession, mDungeonVisit)
+                    }
                 }
                 OrnaViewUpdateType.DUNGEON_GOLD -> {
                     if (mDungeonVisit != null) mDungeonVisit!!.gold += data as Int
                     if (mSession != null) mSession!!.gold += data as Int
-                    mSessionOverlay.update(mSession, mDungeonVisit)
+                    if (mSharedPreference.getBoolean("session", true)) {
+                        mSessionOverlay.update(mSession, mDungeonVisit)
+                    }
                 }
                 OrnaViewUpdateType.NOTIFICATIONS_INVITERS -> {
-                    mInviterOverlay.update(data as MutableMap<String, Rect>)
+                    if (mSharedPreference.getBoolean("invites", true)) {
+                        mInviterOverlay.update(data as MutableMap<String, Rect>)
+                    }
                 }
                 OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST -> {
                     val dtNow = LocalDateTime.now()
-                    if (dtNow.isAfter(mKGLastUpdated.plusSeconds(2)))
-                    {
+                    if (dtNow.isAfter(mKGLastUpdated.plusSeconds(2))) {
                         mKGLastUpdated = dtNow
                         Log.i(TAG, "@$data")
 
-                        val sortedList = Kingdom(mCtx).sortKGItems(data as List<KingdomMember>, mSleepers)
-                        mKGOverlay.update(sortedList)
-                        Kingdom(mCtx).createKGDiscordPost(sortedList)
+                        val sortedList =
+                            Kingdom(mCtx).sortKGItems(data as List<KingdomMember>, mSleepers)
+                        if (mSharedPreference.getBoolean("kg", true)) {
+                            mKGOverlay.update(sortedList)
+                        }
+                        if (mSharedPreference.getBoolean("discord", true)) {
+                            Kingdom(mCtx).createKGDiscordPost(sortedList)
+                        }
                     }
                 }
             }
