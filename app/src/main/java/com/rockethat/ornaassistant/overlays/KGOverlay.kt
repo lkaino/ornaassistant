@@ -40,9 +40,9 @@ class KGOverlay(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun update(data: List<KingdomMember>) {
-        mKGList.clear()
+        val list = mutableListOf<KGItem>()
 
-        mKGList.add(
+        list.add(
             KGItem(
                 "Player",
                 "Floors",
@@ -69,7 +69,7 @@ class KGOverlay(
 
             if (floorTexts.isNotEmpty())
             {
-                mKGList.add(
+                list.add(
                     KGItem(
                         it.character,
                         floorTexts.joinToString(", "),
@@ -82,7 +82,10 @@ class KGOverlay(
             }
         }
 
+        Log.i("OrnaKGOverlay", "Showing ${list.size} / ${data.size} items")
         mRv.post(Runnable {
+            mKGList.clear()
+            mKGList.addAll(list)
             mRv.adapter?.notifyDataSetChanged()
         })
         show()

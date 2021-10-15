@@ -324,6 +324,7 @@ class MainState(
             val sortedList = mKingdomGauntlet.updateItems(items)
 
             if (mSharedPreference.getBoolean("kg", true)) {
+                Log.i(TAG, "Updated KG view with ${sortedList.size} items")
                 mKGOverlay.update(sortedList)
             }
 

@@ -39,6 +39,17 @@ class OrnaViewKingdomGauntlet : OrnaView {
         var characterDepth = 0
         var updateList = mutableMapOf<String, KingdomMember>()
         var number = 0
+
+        var highestDepth = 0
+
+        for (item in data)
+        {
+            if (item.depth > highestDepth)
+            {
+                highestDepth = item.depth
+            }
+        }
+
         for (item in data) {
             if (item.name.lowercase().contains("floor:") || item.name == "+") {
                 val match = Regex("FLOOR:\\s([0-9]+)").findAll(item.name).firstOrNull()
@@ -60,13 +71,13 @@ class OrnaViewKingdomGauntlet : OrnaView {
                     }
 
                     var win = false
-                    if (mobDepth >= 4)
+                    if (mobDepth >= highestDepth)
                     {
                         win = true
                     }
 
                     var loss = false
-                    if (characterDepth >= 4)
+                    if (characterDepth >= highestDepth)
                     {
                         loss = true
                     }

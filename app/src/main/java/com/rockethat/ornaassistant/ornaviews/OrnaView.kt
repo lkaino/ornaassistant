@@ -48,7 +48,7 @@ object OrnaViewFactory {
             data.any { it.name.lowercase().contains("losses:") } -> {
                 OrnaViewType.KINGDOM_GAUNTLET
             }
-            data.any { it.name.lowercase().contains("gauntlet") } -> {
+            data.any {it.name.lowercase().contains("battle a series of opponents")} -> {
                 OrnaViewType.DUNGEON_ENTRY
             }
             else -> {
