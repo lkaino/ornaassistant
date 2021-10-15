@@ -13,10 +13,17 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.R
+import com.rockethat.ornaassistant.db.KingdomGauntletDatabaseHelper
+import com.rockethat.ornaassistant.ui.viewadapters.KingdomSeenAdapter
+import com.rockethat.ornaassistant.ui.viewadapters.KingdomSeenItem
+import com.rockethat.ornaassistant.viewadapters.KGItem
 import org.json.JSONTokener
 import org.json.JSONObject
+import java.time.LocalDateTime
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -32,6 +39,8 @@ class KingdomFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var mKGSeenList = mutableListOf<KingdomSeenItem>()
+    private var mRv: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +58,13 @@ class KingdomFragment : Fragment() {
         val view: View = inflater.inflate(R.layout.fragment_kingdom, container, false)
         val import: Button = view.findViewById(R.id.btnKingdomImport)
         val export: Button = view.findViewById(R.id.btnKingdomExport)
+
+        mRv = view.findViewById<RecyclerView>(R.id.rvKingdomData)
+        if (mRv != null)
+        {
+            mRv!!.adapter = KingdomSeenAdapter(mKGSeenList)
+            mRv!!.layoutManager = LinearLayoutManager(context)
+        }
 
         updateStatusText(view)
         val lblStatus: TextView = view.findViewById(R.id.lblDiscordResult)
@@ -113,10 +129,12 @@ class KingdomFragment : Fragment() {
                 kgDB.close()
             }
         }
+
         // Inflate the layout for this fragment
         return view
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateStatusText(view: View) {
         val lblStatus: TextView = view.findViewById(R.id.lblDiscordStatus)
 
@@ -131,6 +149,40 @@ class KingdomFragment : Fragment() {
         {
             lblStatus.text = "0 mappings currently stored."
         }
+
+        updateSeenList()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateSeenList() {
+        mKGSeenList.clear()
+        val db = context?.let { KingdomGauntletDatabaseHelper(it) }
+        val now = LocalDateTime.now()
+        val entries = db?.getEntriesBetween(now.minusMonths(1), now)
+
+        val entryMap = mutableMapOf<String, Int>()
+        entries?.forEach { it ->
+            if (entryMap.containsKey(it.name))
+            {
+                val value = entryMap[it.name]
+                if (value != null)
+                {
+                    entryMap[it.name] = value.plus(1)
+                }
+            }
+            else
+            {
+                entryMap[it.name] = 1
+            }
+        }
+
+        entryMap.forEach { (s, i) ->
+            mKGSeenList.add(KingdomSeenItem(s, i.toString()))
+        }
+
+        mKGSeenList.sortByDescending { it.seenCount.toInt() }
+
+        mRv?.adapter?.notifyDataSetChanged()
     }
 
     companion object {

@@ -2,11 +2,13 @@ package com.rockethat.ornaassistant.overlays
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rockethat.ornaassistant.KingdomGauntletFloor
 import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.viewadapters.KGAdapter
@@ -28,6 +30,7 @@ class KGOverlay(
         mRv.layoutManager = LinearLayoutManager(mCtx)
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun show() {
         super.show()
         mRv.setOnClickListener {
@@ -50,7 +53,7 @@ class KGOverlay(
             )
         )
 
-        data.forEach {
+        data.forEach { it ->
             var sleeptime = ""
             if (it.endTimeLeftSeconds > 0) {
                 val sleepHours = it.endTimeLeftSeconds / 3600
@@ -58,19 +61,30 @@ class KGOverlay(
                 sleeptime = "${sleepHours}h ${sleepMinutes}m"
             }
 
-            mKGList.add(
-                KGItem(
-                    it.character,
-                    it.floors.keys.joinToString(", "),
-                    if (it.immunity) "⭐" else "",
-                    sleeptime,
-                    it.zerk,
-                    it.seenCount.toString()
+            var floorTexts = mutableListOf<String>()
+            val floors =
+                it.floors.filterValues { f -> !f.loss }.filterValues { f -> !f.win }.forEach { f ->
+                    floorTexts.add(f.value.number.toString())
+                }
+
+            if (floorTexts.isNotEmpty())
+            {
+                mKGList.add(
+                    KGItem(
+                        it.character,
+                        floorTexts.joinToString(", "),
+                        if (it.immunity) "⭐" else "",
+                        sleeptime,
+                        it.zerk,
+                        it.seenCount.toString()
+                    )
                 )
-            )
+            }
         }
 
-        mRv.adapter?.notifyDataSetChanged()
+        mRv.post(Runnable {
+            mRv.adapter?.notifyDataSetChanged()
+        })
         show()
     }
 }

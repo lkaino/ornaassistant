@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.LinearLayout
 import android.view.WindowManager
 import android.graphics.Rect
 import android.os.Build
@@ -20,13 +19,11 @@ class MyAccessibilityService() : AccessibilityService() {
     private val TAG = "OrnaAssist"
     private var mDebugDepth = 0
 
-    var mLayout: LinearLayout? = null
-    var acquired: AccessibilityNodeInfo? = null
-    var currentView: OrnaViewBase? = null
     var lastEvent: Long = 0
     var getChildCalls = 0
     var state: MainState? = null
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
 
@@ -35,19 +32,19 @@ class MyAccessibilityService() : AccessibilityService() {
             getSystemService(WINDOW_SERVICE) as WindowManager, applicationContext,
             inflater.inflate(R.layout.notification_layout, null),
             inflater.inflate(R.layout.wayvessel_overlay, null),
-            inflater.inflate(R.layout.kg_layout, null)
-        )
+            inflater.inflate(R.layout.kg_layout, null),
+            inflater.inflate(R.layout.assess_layout, null)
+            )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onAccessibilityEvent(p0: AccessibilityEvent?) {
-        val start = System.currentTimeMillis()
         if (p0 == null/* || p0.packageName == null || !p0.packageName.contains("orna")*/) {
             return
         } else if (p0.source == null) {
             return
         }
-        val sinceLast = System.currentTimeMillis() - lastEvent
+        /*val sinceLast = System.currentTimeMillis() - lastEvent
         if (sinceLast > 0) {
             //Log.v(TAG, "Event: ${p0?.eventType}, ${sinceLast}")
         } else {
@@ -56,7 +53,7 @@ class MyAccessibilityService() : AccessibilityService() {
                 "DISCARD Event: ${p0?.eventType}, ${sinceLast} ms / ${p0.source.childCount} / ${p0.source.parent.childCount}"
             )
             return
-        }
+        }*/
 
         if (p0.packageName.toString().contains("discord") && p0.eventType != AccessibilityEvent.TYPE_VIEW_CLICKED)
         {
@@ -65,19 +62,12 @@ class MyAccessibilityService() : AccessibilityService() {
 
         mDebugDepth = 0
 
-        if (acquired != null) {
-            acquired!!.refresh()
-            Log.v(TAG, "acquired: ${acquired!!.text}")
-        }
-
-        var dur: Long = 0
         var values = ArrayList<ScreenData>()
-
         var mNodeInfo: AccessibilityNodeInfo? = p0.source
 
         if (p0?.source != null) {
             getChildCalls = 0
-            dur = measureTimeMillis { parseScreen(mNodeInfo, values, 0, 0) }
+            parseScreen(mNodeInfo, values, 0, 0)
         }
         /*if (dur > 0 && p0.source.childCount > 0) {
             val parchilds = if (p0.source.parent != null) p0.source.parent.childCount else 0
@@ -87,22 +77,19 @@ class MyAccessibilityService() : AccessibilityService() {
             )
         }*/
 
+        state?.processData(p0.packageName.toString(), values)
 
-        var bFromParent = false
-
+        lastEvent = System.currentTimeMillis()
+        /*
         var valueNames = ArrayList<String>()
         values.forEach {
             valueNames.add("${it.name}")
         }
 
-
-        state?.processData(p0.packageName.toString(), values)
-
-        lastEvent = System.currentTimeMillis()
         Log.v(
             TAG,
-            "${System.currentTimeMillis() - start} ms: getChildCalls $getChildCalls, $valueNames"
-        )
+            "${p0.eventType} ${System.currentTimeMillis() - start} ms: getChildCalls $getChildCalls, $valueNames"
+        )*/
     }
 
     private fun parseScreen(
@@ -161,7 +148,7 @@ class MyAccessibilityService() : AccessibilityService() {
         var info = this.serviceInfo
 
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
-        info.notificationTimeout = 100
+        info.notificationTimeout = 500
         //info.interactiveUiTimeoutMillis = 1
         info.packageNames = listOf("playorna.com.orna", "com.discord").toTypedArray()
         this.serviceInfo = info

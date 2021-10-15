@@ -101,6 +101,7 @@ class NotificationsAdapter(
         holder.uwText.text = item.UW
         holder.cgText.text = item.CG
         holder.cooldownText.text = item.cooldown
+
         if (item.statusBad) {
             holder.cooldownText.setTextColor(Color.RED)
         } else {

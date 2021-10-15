@@ -78,8 +78,8 @@ class KingdomGauntletDatabaseHelper(context: Context) :
         }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun toEntries(cur: Cursor): Map<LocalDateTime, String> {
-        var map = mutableMapOf<LocalDateTime, String>()
+    private fun toEntries(cur: Cursor): List<KingdomMemberDatabaseItem> {
+        var list = mutableListOf<KingdomMemberDatabaseItem>()
 
         while (cur.moveToNext()) {
             var col = 0
@@ -88,15 +88,15 @@ class KingdomGauntletDatabaseHelper(context: Context) :
 
             val startedDt = LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
 
-            map[startedDt] = name
+            list.add(KingdomMemberDatabaseItem(startedDt, name))
         }
         cur.close()
 
-        return map
+        return list
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getLastNEntries(n: Int): Map<LocalDateTime, String> {
+    fun getLastNEntries(n: Int): List<KingdomMemberDatabaseItem> {
         val db = this.writableDatabase
         return toEntries(
             db.rawQuery(
@@ -108,7 +108,7 @@ class KingdomGauntletDatabaseHelper(context: Context) :
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getEntriesBetween(start: LocalDateTime, end: LocalDateTime, name: String): Map<LocalDateTime, String> {
+    fun getEntriesBetween(start: LocalDateTime, end: LocalDateTime, name: String): List<KingdomMemberDatabaseItem> {
         val startUnix = start.toEpochSecond(ZoneOffset.UTC)
         val endUnix = end.toEpochSecond(ZoneOffset.UTC)
         val db = this.writableDatabase
@@ -118,6 +118,21 @@ class KingdomGauntletDatabaseHelper(context: Context) :
                         "WHERE time > $startUnix " +
                         "AND time < $endUnix " +
                         "AND name = '${name.replace("'", "''")}'",
+                null
+            )
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getEntriesBetween(start: LocalDateTime, end: LocalDateTime): List<KingdomMemberDatabaseItem> {
+        val startUnix = start.toEpochSecond(ZoneOffset.UTC)
+        val endUnix = end.toEpochSecond(ZoneOffset.UTC)
+        val db = this.writableDatabase
+        return toEntries(
+            db.rawQuery(
+                "SELECT * FROM $TABLE_NAME " +
+                        "WHERE time > $startUnix " +
+                        "AND time < $endUnix ",
                 null
             )
         )

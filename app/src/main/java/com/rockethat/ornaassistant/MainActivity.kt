@@ -11,7 +11,10 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 
 import android.content.Intent
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
+import com.rockethat.ornaassistant.ui.fragment.KingdomFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,10 +34,22 @@ class MainActivity : AppCompatActivity() {
         pager.adapter = adapter
 
         tableLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.text) {
-                    "Main" -> pager.currentItem = 0
-                    "Kingdom" -> pager.currentItem = 1
+                    "Main" -> {
+                        pager.currentItem = 0
+                    }
+                    "Kingdom" -> {
+                        pager.currentItem = 1
+                        if (adapter.frags.size >= 2)
+                        {
+                            with (adapter.frags[1] as KingdomFragment)
+                            {
+                                this.updateSeenList()
+                            }
+                        }
+                    }
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab) {}

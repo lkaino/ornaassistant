@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -40,23 +42,27 @@ class SessionOverlay(
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun show() {
-        if (mView.parent == null) {
-            val flags =
-                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-            val paramFloat = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                flags,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT
-            )
+        if (mVisible.compareAndSet(false, true)) {
+            if (mView.parent == null) {
+                val flags =
+                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                val paramFloat = WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    flags,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+                )
 
-            paramFloat.width = (mCtx.resources.displayMetrics.widthPixels * mWidth).toInt()
+                paramFloat.width = (mCtx.resources.displayMetrics.widthPixels * mWidth).toInt()
 
-            paramFloat.gravity = Gravity.TOP or Gravity.LEFT
-            paramFloat.x = 0
-            paramFloat.y = 470
-            mWM.addView(mView, paramFloat)
+                paramFloat.gravity = Gravity.TOP or Gravity.LEFT
+                paramFloat.x = 0
+                paramFloat.y = 470
+                Handler(Looper.getMainLooper()).post {
+                    mWM.addView(mView, paramFloat)
+                }
+            }
         }
     }
 

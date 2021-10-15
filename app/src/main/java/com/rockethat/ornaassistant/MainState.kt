@@ -1,55 +1,64 @@
 package com.rockethat.ornaassistant
 
 import android.content.Context
-import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
 import com.rockethat.ornaassistant.overlays.InviterOverlay
-import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 import com.rockethat.ornaassistant.overlays.KGOverlay
 import com.rockethat.ornaassistant.overlays.SessionOverlay
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.rockethat.ornaassistant.ornaviews.OrnaViewDungeonEntry
+import com.rockethat.ornaassistant.overlays.AssessOverlay
+import org.json.JSONObject
+import java.util.concurrent.LinkedBlockingDeque
+import kotlin.concurrent.thread
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainState(
     private val mWM: WindowManager,
     private val mCtx: Context,
     mNotificationView: View,
     mSessionView: View,
-    mKGView: View
+    mKGView: View,
+    mAssessView: View
 ) {
     private val TAG = "OrnaMainState"
     private val mDungeonDbHelper = DungeonVisitDatabaseHelper(mCtx)
-    private var mCurrentView: OrnaViewBase? = null
+    private var mCurrentView: OrnaView? = null
     private var mDungeonVisit: DungeonVisit? = null
     private var mSession: WayvesselSession? = null
 
     private val mKGOverlay = KGOverlay(mWM, mCtx, mKGView, 0.7)
     private val mInviterOverlay = InviterOverlay(mWM, mCtx, mNotificationView, 0.8)
     private val mSessionOverlay = SessionOverlay(mWM, mCtx, mSessionView, 0.4)
+    private val mAssessOverlay = AssessOverlay(mWM, mCtx, mAssessView, 0.7)
+
+    val mOrnaQueue = LinkedBlockingDeque<ArrayList<ScreenData>>()
+    val mDiscordQueue = LinkedBlockingDeque<ArrayList<ScreenData>>()
 
     private val mSharedPreference: SharedPreferences =
         PreferenceManager.getDefaultSharedPreferences(mCtx)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    var mKGLastUpdated: LocalDateTime = LocalDateTime.now()
-    var mSleepers = mutableMapOf<String, Sleeper>()
+    var mKGNextUpdate: LocalDateTime = LocalDateTime.now()
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    var mKingdomGauntlet = KingdomGauntlet(mCtx)
 
     var sharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            when(key){
+            when (key) {
                 "kg" -> if (!sharedPreferences.getBoolean(key, true)) mKGOverlay.hide()
-                "invites" -> if (!sharedPreferences.getBoolean(key, true))  mInviterOverlay.hide()
+                "invites" -> if (!sharedPreferences.getBoolean(key, true)) mInviterOverlay.hide()
                 "session" -> if (!sharedPreferences.getBoolean(key, true)) mSessionOverlay.hide()
             }
         }
@@ -57,7 +66,28 @@ class MainState(
     init {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx)
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
+
+        thread {
+            while (true) {
+                val data: ArrayList<ScreenData>? = mOrnaQueue.take()
+
+                if (data != null) {
+                    handleOrnaData(data)
+                }
+            }
+        }
+
+        thread {
+            while (true) {
+                val data: ArrayList<ScreenData>? = mDiscordQueue.take()
+
+                if (data != null) {
+                    mKingdomGauntlet.handleDiscordData(data)
+                }
+            }
+        }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleOrnaData(data: ArrayList<ScreenData>) {
@@ -105,64 +135,18 @@ class MainState(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun handleDiscordData(data: ArrayList<ScreenData>) {
-        if (data.size == 1 && data[0].name.contains("Sleepers")) {
-            val sd = data[0]
-            val split = sd.name.split("\n")
-            var date: LocalDateTime? = null
-            var bNames = false
-
-            split.forEach {
-                if (!bNames) {
-                    if (it.startsWith("Current")) {
-                        val match =
-                            Regex("Current:\\s([0-9]+)-([0-9]+)-([0-9]+)\\s([0-9]+):([0-9]+)").findAll(
-                                it
-                            ).firstOrNull()
-                        if (match != null && match.groups.size == 6) {
-                            val year = match.groups[1]?.value?.toInt()
-                            val month = match.groups[2]?.value?.toInt()
-                            val day = match.groups[3]?.value?.toInt()
-                            val hour = match.groups[4]?.value?.toInt()
-                            val minute = match.groups[5]?.value?.toInt()
-                            if (year != null && month != null && day != null && hour != null && minute != null) {
-                                date = LocalDateTime.of(year, month, day, hour, minute)
-                            }
-                        }
-                    } else if (it.contains("Dur Name")) {
-                        bNames = true
-                    }
-                } else if (date != null) {
-                    val match =
-                        Regex("([*]?)\\s+([0-9]+)h([0-9]+)m\\s(.*)").findAll(
-                            it
-                        ).firstOrNull()
-                    if (match != null && match.groups.size == 5) {
-                        val immunity = match.groups[1]?.value
-                        val hours = match.groups[2]?.value?.toLong()
-                        val minutes = match.groups[3]?.value?.toLong()
-                        val name = match.groups[4]?.value
-                        if (hours != null && minutes != null && name != null) {
-                            val endTime = date!!.plusHours(hours).plusMinutes(minutes)
-                            val sleeper =
-                                Sleeper(name, immunity != null && immunity == "*", endTime)
-                            mSleepers[name] = sleeper
-                        }
-                    }
-                }
-            }
-        }
-
-        Log.d(TAG, "Sleepers: $mSleepers")
-    }
+    var maxSize = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun processData(packageName: String, data: ArrayList<ScreenData>) {
         if (packageName.contains("orna")) {
-            handleOrnaData(data)
+            mOrnaQueue.put(data)
+            if (mOrnaQueue.size > maxSize) {
+                maxSize = mOrnaQueue.size
+                Log.i(TAG, "QUEUE $maxSize")
+            }
         } else if (packageName.contains("discord")) {
-            handleDiscordData(data)
+            mDiscordQueue.put(data)
         }
     }
 
@@ -180,12 +164,26 @@ class MainState(
 
         if (mCurrentView == null || (newType != null && newType != mCurrentView!!.type)) {
             val view = OrnaViewFactory.create(newType, data, mWM, mCtx)
-            mCurrentView?.update(data, ::processUpdate)
+            var update = true
+            if (mCurrentView != null) {
+                if (newType == OrnaViewType.ITEM) {
+                    if (!mSharedPreference.getBoolean("assess", true)) {
+                        update = false
+                    }
+                }
+                if (mCurrentView!!.type == OrnaViewType.ITEM)
+                {
+                    mAssessOverlay.hide()
+                }
+            }
+
 
             if (view != null) {
                 if (mCurrentView != null) mCurrentView!!.close()
                 mCurrentView = view
-                mCurrentView!!.drawOverlay()
+                if (update) {
+                    mCurrentView?.update(data, ::processUpdate)
+                }
                 Log.d(TAG, "VIEW CHANGED TO ${view.type}")
                 if (view.type != OrnaViewType.NOTIFICATIONS) {
                     mInviterOverlay.hide()
@@ -256,20 +254,10 @@ class MainState(
                     }
                 }
                 OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST -> {
-                    val dtNow = LocalDateTime.now()
-                    if (dtNow.isAfter(mKGLastUpdated.plusSeconds(2))) {
-                        mKGLastUpdated = dtNow
-                        Log.i(TAG, "@$data")
-
-                        val sortedList =
-                            Kingdom(mCtx).sortKGItems(data as List<KingdomMember>, mSleepers)
-                        if (mSharedPreference.getBoolean("kg", true)) {
-                            mKGOverlay.update(sortedList)
-                        }
-                        if (mSharedPreference.getBoolean("discord", true)) {
-                            Kingdom(mCtx).createKGDiscordPost(sortedList)
-                        }
-                    }
+                    updateKG(data as List<KingdomMember>)
+                }
+                OrnaViewUpdateType.ITEM_ASSESS_RESULTS -> {
+                    mAssessOverlay.update(data as JSONObject)
                 }
             }
         }
@@ -281,6 +269,72 @@ class MainState(
                 Log.i(TAG, "Stored: $mDungeonVisit")
             }
             mDungeonVisit = null
+        }
+    }
+
+    private fun updateKG(items: List<KingdomMember>) {
+        val dtNow = LocalDateTime.now()
+        val new = KingdomGauntlet(mCtx)
+        val uniqueThis = mutableListOf<KingdomMember>()
+        val uniqueOther = mutableListOf<KingdomMember>()
+        new.updateItems(items)
+        mKingdomGauntlet.diffFloors(new, uniqueThis, uniqueOther)
+
+        if (dtNow.isBefore(mKingdomGauntlet.mLastUpdate.plusSeconds(30)) &&
+            uniqueThis.size > 1
+        ) {
+            // Ignore the data before 5 seconds has passed since last update
+            Log.i(TAG, "Discarding kingdom gauntlet data: ${uniqueThis.size}")
+            return
+        } else if (new.mList.isEmpty()) {
+            return
+        }
+
+        if (uniqueThis.size > 0 || uniqueOther.size > 0 ||
+            (!mKGOverlay.mVisible.get() && dtNow.isAfter(mKGNextUpdate))
+        ) {
+            var shuffle = false
+
+            Log.i(TAG, "mKingdomGauntlet (${items.size}): ${mKingdomGauntlet.mList}")
+            Log.i(TAG, "new (${items.size}): ${new.mList}")
+            Log.i(TAG, "uniqueThis: $uniqueThis")
+            Log.i(TAG, "uniqueOther: $uniqueOther")
+
+            if ((uniqueThis.size == 1) && (uniqueThis.first().floors.size == 1)) {
+                Log.i(TAG, "One floor was removed!")
+                // One floor was removed
+                val otherMember = uniqueOther.firstOrNull { it.floors.containsKey(40) }
+                if (otherMember != null) {
+                    // One of the new floors contains floor 40, this is a shuffle
+                    Log.i(
+                        TAG,
+                        "One of the new floors contains floor 40, this is a shuffle"
+                    )
+                    if (mSharedPreference.getBoolean("discord", true)) {
+                        shuffle = true
+                        Log.i(TAG, "Creating shuffle discord post")
+                        mKingdomGauntlet.createKGDiscordShufflePost(
+                            uniqueThis.first(),
+                            otherMember
+                        )
+                    }
+                }
+            }
+
+            val sortedList = mKingdomGauntlet.updateItems(items)
+
+            if (mSharedPreference.getBoolean("kg", true)) {
+                mKGOverlay.update(sortedList)
+            }
+
+            mKGNextUpdate = if (!shuffle) {
+                if (mSharedPreference.getBoolean("discord", true)) {
+                    mKingdomGauntlet.createKGDiscordPost()
+                }
+                dtNow.plusSeconds(2)
+            } else {
+                dtNow.plusSeconds(20)
+            }
         }
     }
 }
