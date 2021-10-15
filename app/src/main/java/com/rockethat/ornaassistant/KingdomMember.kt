@@ -25,7 +25,7 @@ data class KingdomMember(val character: String, var floors: MutableMap<Int, King
     val numFloors
         get() = floors.filterValues { floor -> !floor.loss }.filterValues { floor -> !floor.win }.size
     val zerk
-        get() = floors.any { it.value.mobName.contains("berserk") }
+        get() = floors.any { it.value.mobName.lowercase().contains("berserk") }
 
     override fun toString(): String {
         return "$character: ${floors.values}"
