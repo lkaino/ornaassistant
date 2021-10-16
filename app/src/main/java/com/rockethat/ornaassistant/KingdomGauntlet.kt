@@ -20,6 +20,7 @@ class KingdomGauntlet(val mCtx: Context) {
     var mSleepers = mutableMapOf<String, Sleeper>()
     var mList = listOf<KingdomMember>()
     var mMap = mutableMapOf<String, KingdomMember>()
+
     @RequiresApi(Build.VERSION_CODES.O)
     var mLastUpdate = LocalDateTime.now()
 
@@ -72,9 +73,20 @@ class KingdomGauntlet(val mCtx: Context) {
 
         if (insert) {
             Log.d("OrnaKG", "Inserting ${items.size} items.")
-            items.forEach {
-                if (it.endTimeLeftSeconds <= 0) {
-                    kgDB.insertData(dt, it.character)
+            items.forEach { member ->
+                if (member.endTimeLeftSeconds <= 0) {
+                    var notDoneFloors = false
+
+                    member.floors.forEach {
+                        if (!it.value.loss && !it.value.win) {
+                            notDoneFloors = true
+                        }
+                    }
+
+                    if (notDoneFloors)
+                    {
+                        kgDB.insertData(dt, member.character)
+                    }
                 }
             }
         }
