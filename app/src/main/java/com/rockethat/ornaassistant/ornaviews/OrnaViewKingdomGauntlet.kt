@@ -42,10 +42,8 @@ class OrnaViewKingdomGauntlet : OrnaView {
 
         var highestDepth = 0
 
-        for (item in data)
-        {
-            if (item.depth > highestDepth)
-            {
+        for (item in data) {
+            if (item.depth > highestDepth) {
                 highestDepth = item.depth
             }
         }
@@ -55,8 +53,7 @@ class OrnaViewKingdomGauntlet : OrnaView {
                 val match = Regex("FLOOR:\\s([0-9]+)").findAll(item.name).firstOrNull()
                 if (match != null && match.groups.size == 2) {
                     val num = match.groups[1]?.value?.toInt()
-                    if (num != null)
-                    {
+                    if (num != null) {
                         number = num
                     }
                 }
@@ -65,25 +62,21 @@ class OrnaViewKingdomGauntlet : OrnaView {
                 vsAfterFloor = false
                 if (character.isNotEmpty()) {
                     var member: KingdomMember? = updateList[character]
-                    if (member == null)
-                    {
+                    if (member == null) {
                         member = KingdomMember(character, mutableMapOf())
                     }
 
                     var win = false
-                    if (mobDepth >= highestDepth)
-                    {
+                    if (mobDepth >= highestDepth) {
                         win = true
                     }
 
                     var loss = false
-                    if (characterDepth >= highestDepth)
-                    {
+                    if (characterDepth >= highestDepth) {
                         loss = true
                     }
 
-                    if (item.name == "+")
-                    {
+                    if (item.name == "+") {
                         number++
                     }
 
@@ -105,13 +98,13 @@ class OrnaViewKingdomGauntlet : OrnaView {
             prevItemDepth = item.depth
         }
 
-        if (updateList.isNotEmpty())
-        {
+        if (updateList.isNotEmpty()) {
             var list = mutableListOf<KingdomMember>()
             updateList.forEach { (s, item) ->
                 list.add(item)
             }
-            val update = mutableMapOf<OrnaViewUpdateType, Any?>(OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST to list)
+            val update =
+                mutableMapOf<OrnaViewUpdateType, Any?>(OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST to list)
             updateResults(update)
         }
 
