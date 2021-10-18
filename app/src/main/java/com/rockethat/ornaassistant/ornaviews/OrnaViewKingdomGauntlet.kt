@@ -47,7 +47,7 @@ class OrnaViewKingdomGauntlet : OrnaView {
             // workaround for allies view
             return true
         }
-        
+
         for (item in data) {
             if (item.depth > highestDepth) {
                 highestDepth = item.depth
