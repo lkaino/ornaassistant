@@ -14,6 +14,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/tvSessionHeader"
+            android:layout_width="@dimen/sessionColWidth"
+            android:layout_height="wrap_content"
+            android:shadowColor="@color/overlayShadowColor"
+            android:shadowRadius="@dimen/overlayShadowRadius"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/overlayWhite"
+            android:textSize="@dimen/sessionOverlayTextSize"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tvOrnsDungeon"
             android:layout_width="@dimen/sessionColWidth"
             android:layout_height="wrap_content"
@@ -101,7 +115,7 @@
             android:textSize="@dimen/sessionOverlayTextSize"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvOrns" />
+            app:layout_constraintTop_toBottomOf="@+id/tvSessionHeader" />
 
         <TextView
             android:id="@+id/tvDungeon"

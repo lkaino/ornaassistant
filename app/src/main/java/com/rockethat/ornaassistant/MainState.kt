@@ -235,6 +235,7 @@ class MainState(
                         var sessionID: Long? = null
                         if (mSession != null) {
                             sessionID = mSession!!.mID
+                            mSession!!.mDungeonsVisited++
                         }
                         mDungeonVisit = DungeonVisit(sessionID, view.mDungeonName, view.mMode)
                         Log.d(TAG, "Entered: $mDungeonVisit")
@@ -323,7 +324,7 @@ class MainState(
         }
 
         if (uniqueThis.size > 0 || uniqueOther.size > 0 ||
-            (!mKGOverlay.mVisible.get() && dtNow.isAfter(mKGNextUpdate))
+            (!mKGOverlay.isVisible() && dtNow.isAfter(mKGNextUpdate))
         ) {
             var shuffle = false
 

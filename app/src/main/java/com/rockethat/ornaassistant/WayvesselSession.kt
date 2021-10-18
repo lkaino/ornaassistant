@@ -16,6 +16,7 @@ class WayvesselSession(val name: String, val mCtx: Context?) {
 
     var mStarted: LocalDateTime = LocalDateTime.now()
     var mDurationSeconds: Long = 0
+    var mDungeonsVisited = 0
 
     init {
         if (mCtx != null)

@@ -34,6 +34,8 @@ class SessionOverlay(
 ) :
     Overlay(mWM, mCtx, mView, mWidth) {
 
+    var mSessionHeaderTv = mView.findViewById<TextView>(R.id.tvSessionHeader)
+    var mSessionTv = mView.findViewById<TextView>(R.id.tvSession)
     var mSessionGoldTv = mView.findViewById<TextView>(R.id.tvGoldSession)
     var mSessionOrnTv = mView.findViewById<TextView>(R.id.tvOrnsSession)
     var mDungeonGoldTv = mView.findViewById<TextView>(R.id.tvGoldDungeon)
@@ -68,23 +70,40 @@ class SessionOverlay(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun update(session: WayvesselSession?, dungeonVisit: DungeonVisit?) {
-        if (session != null) {
-            mSessionGoldTv.text = createSessionGoldOrnNumberString(session.gold)
-            mSessionOrnTv.text = createSessionGoldOrnNumberString(session.orns)
-        } else {
-            mSessionGoldTv.text = "0"
-            mSessionOrnTv.text = "0"
-        }
-
-        if (dungeonVisit != null) {
-            mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.gold)
-            mDungeonOrnTv.text = createSessionGoldOrnNumberString(dungeonVisit.orns)
-        } else {
-            if (session == null) {
-                mDungeonGoldTv.text = "0"
-                mDungeonOrnTv.text = "0"
+        Handler(Looper.getMainLooper()).post {
+            if (session != null) {
+                mSessionHeaderTv.text = "@${session.name}"
+                if (session.mDungeonsVisited > 1) {
+                    mSessionTv.text = "${session.mDungeonsVisited} dungeons"
+                    mSessionGoldTv.text = createSessionGoldOrnNumberString(session.gold)
+                    mSessionOrnTv.text = createSessionGoldOrnNumberString(session.orns)
+                    mSessionTv.visibility = View.VISIBLE
+                    mSessionGoldTv.visibility = View.VISIBLE
+                    mSessionOrnTv.visibility = View.VISIBLE
+                } else {
+                    mSessionTv.visibility = View.GONE
+                    mSessionGoldTv.visibility = View.GONE
+                    mSessionOrnTv.visibility = View.GONE
+                }
             } else {
-                // Keep the last dungeon data when we are in session
+                mSessionHeaderTv.text = ""
+                mSessionGoldTv.text = "0"
+                mSessionOrnTv.text = "0"
+                mSessionTv.visibility = View.GONE
+                mSessionGoldTv.visibility = View.GONE
+                mSessionOrnTv.visibility = View.GONE
+            }
+
+            if (dungeonVisit != null) {
+                mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.gold)
+                mDungeonOrnTv.text = createSessionGoldOrnNumberString(dungeonVisit.orns)
+            } else {
+                if (session == null) {
+                    mDungeonGoldTv.text = "0"
+                    mDungeonOrnTv.text = "0"
+                } else {
+                    // Keep the last dungeon data when we are in session
+                }
             }
         }
         show()

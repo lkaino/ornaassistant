@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import android.os.Looper
 import android.util.Log
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantLock
 
 
 open class Overlay(
@@ -20,33 +21,36 @@ open class Overlay(
     val mWidth: Double
 ) {
     var mVisible = AtomicBoolean(false)
+    val lock = ReentrantLock()
+    private var mParamFloat: WindowManager.LayoutParams = WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSLUCENT
+    ).apply {
+        width = (mCtx.resources.displayMetrics.widthPixels * mWidth).toInt()
+        gravity = Gravity.TOP or Gravity.LEFT
+        x = 5
+        y = 5
+    }
+
+    fun isVisible(): Boolean {
+        return mVisible.get()
+    }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     open fun show() {
         if (mVisible.compareAndSet(false, true)) {
-            if (mView.parent == null) {
-                Log.i("OrnaOverlay", "SHOW!")
-                val flags =
-                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                val paramFloat = WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    flags,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-                )
+            Log.i("OrnaOverlay", "SHOW!")
 
-                paramFloat.width = (mCtx.resources.displayMetrics.widthPixels * mWidth).toInt()
-
-                paramFloat.gravity = Gravity.TOP or Gravity.LEFT
-                paramFloat.x = 5
-                paramFloat.y = 5
-
-                Handler(Looper.getMainLooper()).post {
-                    mWM.addView(mView, paramFloat)
+            Handler(Looper.getMainLooper()).post {
+                if (mView.parent == null) {
+                    mWM.addView(mView, mParamFloat)
                 }
-                Log.i("OrnaOverlay", "SHOW DONE!")
+                mVisible.set(true)
             }
+            Log.i("OrnaOverlay", "SHOW DONE!")
         }
     }
 
@@ -57,6 +61,7 @@ open class Overlay(
             Handler(Looper.getMainLooper()).post {
                 if (mView.parent != null) {
                     mWM.removeViewImmediate(mView)
+                    mVisible.set(false)
                 }
             }
         }
