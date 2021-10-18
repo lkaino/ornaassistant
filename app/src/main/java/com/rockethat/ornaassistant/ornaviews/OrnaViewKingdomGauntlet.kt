@@ -42,14 +42,22 @@ class OrnaViewKingdomGauntlet : OrnaView {
 
         var highestDepth = 0
 
+        if (data.any{it.name.equals("Allies")})
+        {
+            // workaround for allies view
+            return true
+        }
+        
         for (item in data) {
             if (item.depth > highestDepth) {
                 highestDepth = item.depth
             }
         }
 
+
+
         for (item in data) {
-            if (item.name.lowercase().contains("floor:") || item.name == "+") {
+            if (item.name.lowercase().contains("floor:") || (vsAfterFloor && item.name == "+")) {
                 val match = Regex("FLOOR:\\s([0-9]+)").findAll(item.name).firstOrNull()
                 if (match != null && match.groups.size == 2) {
                     val num = match.groups[1]?.value?.toInt()
