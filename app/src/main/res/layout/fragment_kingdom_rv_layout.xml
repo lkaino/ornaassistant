@@ -21,7 +21,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="16sp"
             tools:text="Quczyna vel Kuczyna" />
 
@@ -32,8 +31,7 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif"
             android:text="0"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAlignment="viewStart"
             android:textSize="16sp" />
 
     </LinearLayout>
