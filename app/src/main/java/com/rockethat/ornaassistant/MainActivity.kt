@@ -47,9 +47,8 @@ class MainActivity : AppCompatActivity() {
                 when (tab.text) {
                     "Main" -> {
                         pager.currentItem = 0
-                        if (adapter.frags.size >= 1)
-                        {
-                            with (adapter.frags[0] as MainFragment)
+                        if (adapter.frags.size >= 1) {
+                            with(adapter.frags[0] as MainFragment)
                             {
                                 this.drawWeeklyChart()
                             }
@@ -57,9 +56,8 @@ class MainActivity : AppCompatActivity() {
                     }
                     "Kingdom" -> {
                         pager.currentItem = 1
-                        if (adapter.frags.size >= 2)
-                        {
-                            with (adapter.frags[1] as KingdomFragment)
+                        if (adapter.frags.size >= 2) {
+                            with(adapter.frags[1] as KingdomFragment)
                             {
                                 this.updateSeenList()
                             }
@@ -67,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
@@ -97,21 +96,37 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == R.id.item_preference)
-        {
+        if (id == R.id.item_preference) {
             goToSettingsActivity()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun goToSettingsActivity()
-    {
+    private fun goToSettingsActivity() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        isAccessibilityEnabled()
+        when (tableLayout.selectedTabPosition) {
+            0 -> {
+                if (adapter.frags.size >= 1) {
+                    with(adapter.frags[0] as MainFragment)
+                    {
+                        this.drawWeeklyChart()
+                    }
+                }
+            }
+            1 -> {
+                if (adapter.frags.size >= 2) {
+                    with(adapter.frags[1] as KingdomFragment)
+                    {
+                        this.updateSeenList()
+                    }
+                }
+            }
+        }
     }
 
     fun isAccessibilityEnabled(): Boolean {
@@ -132,22 +147,22 @@ class MainActivity : AppCompatActivity() {
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
             )
             Log.d(TAG, "Setting: $settingValue")
-                mStringColonSplitter.setString(settingValue)
-                while (mStringColonSplitter.hasNext()) {
-                    val accessabilityService = mStringColonSplitter.next()
-                    Log.d(TAG, "Setting: $accessabilityService")
-                    if (accessabilityService.contains(
-                            packageName,
-                            ignoreCase = true
-                        )
-                    ) {
-                        Log.d(
-                            TAG,
-                            "We've found the correct setting - accessibility is switched on!"
-                        )
-                        return true
-                    }
+            mStringColonSplitter.setString(settingValue)
+            while (mStringColonSplitter.hasNext()) {
+                val accessabilityService = mStringColonSplitter.next()
+                Log.d(TAG, "Setting: $accessabilityService")
+                if (accessabilityService.contains(
+                        packageName,
+                        ignoreCase = true
+                    )
+                ) {
+                    Log.d(
+                        TAG,
+                        "We've found the correct setting - accessibility is switched on!"
+                    )
+                    return true
                 }
+            }
             Log.d(TAG, "***END***")
         } else {
             Log.d(TAG, "***ACCESSIBILIY IS DISABLED***")

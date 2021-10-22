@@ -20,7 +20,6 @@ import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.db.KingdomGauntletDatabaseHelper
 import com.rockethat.ornaassistant.ui.viewadapters.KingdomSeenAdapter
 import com.rockethat.ornaassistant.ui.viewadapters.KingdomSeenItem
-import com.rockethat.ornaassistant.viewadapters.KGItem
 import org.json.JSONTokener
 import org.json.JSONObject
 import java.time.LocalDateTime
@@ -41,6 +40,8 @@ class KingdomFragment : Fragment() {
     private var param2: String? = null
     private var mKGSeenList = mutableListOf<KingdomSeenItem>()
     private var mRv: RecyclerView? = null
+    private lateinit var mKMDb: KingdomMemberDatabaseHelper
+    private lateinit var mKGDb: KingdomGauntletDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,8 @@ class KingdomFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        mKMDb = KingdomMemberDatabaseHelper(context as android.content.Context)
+        mKGDb = KingdomGauntletDatabaseHelper(context as android.content.Context)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -60,8 +63,7 @@ class KingdomFragment : Fragment() {
         val export: Button = view.findViewById(R.id.btnKingdomExport)
 
         mRv = view.findViewById<RecyclerView>(R.id.rvKingdomData)
-        if (mRv != null)
-        {
+        if (mRv != null) {
             mRv!!.adapter = KingdomSeenAdapter(mKGSeenList)
             mRv!!.layoutManager = LinearLayoutManager(context)
         }
@@ -71,63 +73,49 @@ class KingdomFragment : Fragment() {
         lblStatus.text = ""
 
         export.setOnClickListener {
-            val kgDB = this.context?.let { it1 -> KingdomMemberDatabaseHelper(it1) }
-
-            if (kgDB != null) {
-                var text = "{"
-                val items = kgDB.allData
-                val rows = mutableListOf<String>()
-                items.forEach {
-                    rows.add("\"${it.character}\": \"${it.discordName}\"")
-                }
-                text += rows.joinToString(",\n")
-                text += "}"
-
-                val clipboard: ClipboardManager? =
-                    context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                val clip = ClipData.newPlainText("label", text)
-                clipboard?.setPrimaryClip(clip)
-
-                val lblResult: TextView = view.findViewById(R.id.lblDiscordResult)
-                lblResult.text = "${items.size} mappings copied."
-
-                kgDB.close()
+            var text = "{"
+            val items = mKMDb.allData
+            val rows = mutableListOf<String>()
+            items.forEach {
+                rows.add("\"${it.character}\": \"${it.discordName}\"")
             }
+            text += rows.joinToString(",\n")
+            text += "}"
+
+            val clipboard: ClipboardManager? =
+                context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            val clip = ClipData.newPlainText("label", text)
+            clipboard?.setPrimaryClip(clip)
+
+            lblStatus.text = "${items.size} mappings copied."
         }
 
         import.setOnClickListener {
-            val kgDB = this.context?.let { it1 -> KingdomMemberDatabaseHelper(it1) }
-            val lblResult: TextView = view.findViewById(R.id.lblDiscordResult)
 
-            if (kgDB != null) {
-                val clipboard: ClipboardManager? =
-                    context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                try {
-                    var numOfEntriesUpdated = 0
-                    val json = JSONTokener(clipboard?.primaryClip?.getItemAt(0)?.text.toString()).nextValue() as JSONObject
-                    json.keys().forEach { ign ->
-                        val entry = KingdomMember(ign, mutableMapOf())
-                        entry.discordName = json.getString(ign)
-                        val existing = kgDB.getEntry(entry.character)
-                        if (existing != null)
-                        {
-                            if (kgDB.updateData(entry))
-                            {
-                                numOfEntriesUpdated++
-                            }
-                        }
-                        else
-                        {
-                            kgDB.insertData(entry)
+            val clipboard: ClipboardManager? =
+                context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            try {
+                var numOfEntriesUpdated = 0
+                val json =
+                    JSONTokener(clipboard?.primaryClip?.getItemAt(0)?.text.toString()).nextValue() as JSONObject
+                json.keys().forEach { ign ->
+                    val entry = KingdomMember(ign, mutableMapOf())
+                    entry.discordName = json.getString(ign)
+                    val existing = mKMDb.getEntry(entry.character)
+                    if (existing != null) {
+                        if (mKMDb.updateData(entry)) {
                             numOfEntriesUpdated++
                         }
+                    } else {
+                        mKMDb.insertData(entry)
+                        numOfEntriesUpdated++
                     }
-                    lblResult.text = "$numOfEntriesUpdated mappings updated."
-                } catch (e: Exception) {
-                    lblResult.text = "Failed to read data: ${e.message}"
                 }
-                kgDB.close()
+                lblStatus.text = "$numOfEntriesUpdated mappings updated."
+            } catch (e: Exception) {
+                lblStatus.text = "Failed to read data: ${e.message}"
             }
+            mKMDb.close()
         }
 
         // Inflate the layout for this fragment
@@ -138,17 +126,9 @@ class KingdomFragment : Fragment() {
     private fun updateStatusText(view: View) {
         val lblStatus: TextView = view.findViewById(R.id.lblDiscordStatus)
 
-        val kgDB = this.context?.let { it1 -> KingdomMemberDatabaseHelper(it1) }
-        if (kgDB != null)
-        {
-            val items = kgDB.allData
-            lblStatus.text = "${items.size} mappings currently stored."
-            kgDB.close()
-        }
-        else
-        {
-            lblStatus.text = "0 mappings currently stored."
-        }
+        val items = mKMDb.allData
+        lblStatus.text = "${items.size} mappings currently stored."
+        mKMDb.close()
 
         updateSeenList()
     }
@@ -156,22 +136,17 @@ class KingdomFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateSeenList() {
         mKGSeenList.clear()
-        val db = context?.let { KingdomGauntletDatabaseHelper(it) }
         val now = LocalDateTime.now()
-        val entries = db?.getEntriesBetween(now.minusMonths(1), now)
+        val entries = mKGDb?.getEntriesBetween(now.minusMonths(1), now)
 
         val entryMap = mutableMapOf<String, Int>()
-        entries?.forEach { it ->
-            if (entryMap.containsKey(it.name))
-            {
+        entries.forEach { it ->
+            if (entryMap.containsKey(it.name)) {
                 val value = entryMap[it.name]
-                if (value != null)
-                {
+                if (value != null) {
                     entryMap[it.name] = value.plus(1)
                 }
-            }
-            else
-            {
+            } else {
                 entryMap[it.name] = 1
             }
         }

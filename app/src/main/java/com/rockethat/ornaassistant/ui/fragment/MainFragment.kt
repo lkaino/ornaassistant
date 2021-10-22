@@ -2,6 +2,7 @@ package com.rockethat.ornaassistant.ui.fragment
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -14,16 +15,17 @@ import com.rockethat.ornaassistant.R
 import android.widget.Button
 import androidx.annotation.RequiresApi
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
-import java.time.DateTimeException
 import java.time.LocalDate
-import java.time.LocalDateTime
+
+import android.content.res.Resources.Theme
+
+import android.util.TypedValue
+import com.google.android.material.color.MaterialColors
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -40,6 +42,7 @@ class MainFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var mDb: DungeonVisitDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,7 @@ class MainFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        mDb = DungeonVisitDatabaseHelper(context as Context)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -81,6 +85,7 @@ class MainFragment : Fragment() {
         override fun getFormattedValue(value: Float): String {
             return value.toInt().toString()
         }
+
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return value.toInt().toString()
         }
@@ -93,13 +98,13 @@ class MainFragment : Fragment() {
         val eDung = mutableListOf<BarEntry>()
         val eOrns = mutableListOf<BarEntry>()
 
-        val db = DungeonVisitDatabaseHelper(context as Context)
-
         val startOfToday = LocalDate.now().atStartOfDay()
         val startDay = startOfToday.minusDays(6).dayOfWeek.value
-        for (i in 6 downTo 0)
-        {
-            val entries = db.getEntriesBetween(startOfToday.minusDays(i.toLong()), startOfToday.minusDays((i - 1).toLong()))
+        for (i in 6 downTo 0) {
+            val entries = mDb.getEntriesBetween(
+                startOfToday.minusDays(i.toLong()),
+                startOfToday.minusDays((i - 1).toLong())
+            )
             eDung.add(BarEntry(i.toFloat(), entries.size.toFloat()))
             var orns = 0f
             entries.forEach {
@@ -109,14 +114,20 @@ class MainFragment : Fragment() {
             eOrns.add(BarEntry(i.toFloat(), orns))
         }
 
+        var textColor = Color.BLACK
+        if (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+            textColor = Color.LTGRAY
+        }
         val sDung = BarDataSet(eDung, "Dungeons")
         val sOrns = BarDataSet(eOrns, "Orns gained (mil)")
         sDung.valueFormatter = IntegerFormatter()
         sDung.valueTextSize = 12f
         sOrns.valueTextSize = 12f
-        sDung.color = Color.RED
-        sOrns.color = Color.GREEN
+        sDung.color = Color.parseColor("#ff6d00")
+        sOrns.color = Color.parseColor("#558b2f")
 
+        sDung.valueTextColor = textColor
+        sOrns.valueTextColor = textColor
         val data = BarData(sDung, sOrns)
 
         val groupSpace = 0.06f
@@ -130,6 +141,7 @@ class MainFragment : Fragment() {
         chart.data = data
         chart.xAxis.valueFormatter = WeekAxisFormatter(startDay)
         chart.xAxis.textSize = 10f
+        chart.xAxis.textColor = textColor
         chart.xAxis.position = XAxis.XAxisPosition.BOTH_SIDED
         chart.groupBars(0F, groupSpace, barSpace)
         chart.xAxis.axisMaximum = 7f
@@ -137,6 +149,10 @@ class MainFragment : Fragment() {
         chart.xAxis.setCenterAxisLabels(true)
         chart.xAxis.setDrawGridLines(false)
         chart.description.isEnabled = false
+
+        chart.axisLeft.textColor = textColor
+        chart.axisRight.textColor = textColor
+        chart.legend.textColor = textColor
         chart.invalidate()
     }
 
