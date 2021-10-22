@@ -8,6 +8,42 @@
     tools:context=".ui.fragment.MainFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvWeekly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="Dungeon visits from past 7 days"
+                android:textSize="22sp" />
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/cWeeklyDungeons"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="5dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
     <Button
         android:id="@+id/allowPermission"
