@@ -10,11 +10,10 @@ import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import android.os.Looper
 import android.util.Log
-import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantLock
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 open class Overlay(
     val mWM: WindowManager,
     val mCtx: Context,
@@ -22,7 +21,7 @@ open class Overlay(
     val mWidth: Double
 ) {
     var mVisible = AtomicBoolean(false)
-    var mLastHide = LocalDateTime.now().minusDays(1)
+    val lock = ReentrantLock()
     private var mParamFloat: WindowManager.LayoutParams = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.WRAP_CONTENT,
@@ -58,7 +57,6 @@ open class Overlay(
 
     open fun hide() {
         if (mVisible.compareAndSet(true, false)) {
-            mLastHide = LocalDateTime.now()
             Log.i("OrnaOverlay", "HIDE!")
             Handler(Looper.getMainLooper()).post {
                 if (mView.parent != null) {

@@ -2,8 +2,6 @@ package com.rockethat.ornaassistant
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Rect
 import android.os.Build
@@ -135,7 +133,8 @@ class MainState(
                             mSessionOverlay.hide()
                         }
                         mSession = WayvesselSession(name, mCtx)
-                        if (mSharedPreference.getBoolean("nWayvessel", true)) {
+                        if (mSharedPreference.getBoolean("nWayvessel", true))
+                        {
                             scheduleWayvesselNotification(60)
                         }
                         if (mDungeonVisit != null) {
@@ -324,9 +323,8 @@ class MainState(
             return
         }
 
-        if (LocalDateTime.now().isAfter(mKGOverlay.mLastHide.plusSeconds(10)) &&
-            (uniqueThis.size > 0 || uniqueOther.size > 0 ||
-                    (!mKGOverlay.isVisible() && dtNow.isAfter(mKGNextUpdate)))
+        if (uniqueThis.size > 0 || uniqueOther.size > 0 ||
+            (!mKGOverlay.isVisible() && dtNow.isAfter(mKGNextUpdate))
         ) {
             var shuffle = false
 
@@ -353,7 +351,8 @@ class MainState(
                             otherMember
 
                         )
-                        if (mSharedPreference.getBoolean("nKGShuffle", true)) {
+                        if (mSharedPreference.getBoolean("nKGShuffle", true))
+                        {
                             scheduleShuffleNotification(20)
                         }
                     }
@@ -428,12 +427,12 @@ class MainState(
         }
     }
 
-    private fun getRandomShuffleChannel(): String {
+    private fun getRandomShuffleChannel() : String {
 
         return mShuffleNotificationChannelNames[(mShuffleNotificationChannelNames.indices).random()]
     }
 
-    private fun getRandomShuffleSound(): String {
+    private fun getRandomShuffleSound() : String {
 
         return "android.resource://" + mCtx.packageName + "/" + mShuffleRes[(mShuffleRes.indices).random()]
     }
