@@ -47,6 +47,7 @@ class MainState(
     private val mDungeonDbHelper = DungeonVisitDatabaseHelper(mCtx)
     private var mCurrentView: OrnaView? = null
     private var mDungeonVisit: DungeonVisit? = null
+    private var mOnholdVisits = mutableMapOf<String, DungeonVisit>()
     private var mSession: WayvesselSession? = null
     private var mBattle = Battle(mAS)
 
@@ -233,17 +234,33 @@ class MainState(
                 OrnaViewUpdateType.DUNGEON_ENTERED -> {
                     if (mDungeonVisit == null) {
                         val view: OrnaViewDungeonEntry = mCurrentView as OrnaViewDungeonEntry
-                        var sessionID: Long? = null
-                        if (mSession != null) {
-                            sessionID = mSession!!.mID
-                            mSession!!.mDungeonsVisited++
+                        if (mOnholdVisits.containsKey(view.mDungeonName))
+                        {
+                            Log.i(TAG, "Reloading on hold visit to ${view.mDungeonName}.")
+                            mDungeonVisit = mOnholdVisits[view.mDungeonName]
+                            mOnholdVisits.remove(view.mDungeonName)
                         }
-                        mDungeonVisit = DungeonVisit(sessionID, view.mDungeonName, view.mMode)
-                        Log.d(TAG, "Entered: $mDungeonVisit")
+                        else
+                        {
+                            var sessionID: Long? = null
+                            if (mSession != null) {
+                                sessionID = mSession!!.mID
+                                mSession!!.mDungeonsVisited++
+                            }
+                            mDungeonVisit = DungeonVisit(sessionID, view.mDungeonName, view.mMode)
+                            Log.d(TAG, "Entered: $mDungeonVisit")
+                        }
                     }
 
                     if (mSharedPreference.getBoolean("session", true)) {
                         mSessionOverlay.update(mSession, mDungeonVisit)
+                    }
+                }
+                OrnaViewUpdateType.DUNGEON_NEW_DUNGEON -> {
+                    if (mDungeonVisit != null) {
+                        Log.i(TAG, "Putting on hold visit to ${mDungeonVisit!!.name}.")
+                        mOnholdVisits[mDungeonVisit!!.name] = mDungeonVisit!!
+                        mDungeonVisit = null
                     }
                 }
                 OrnaViewUpdateType.DUNGEON_MODE_CHANGED -> {

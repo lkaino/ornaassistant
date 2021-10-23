@@ -60,6 +60,8 @@ class OrnaViewDungeonEntry : OrnaView {
 
         val nameFromData = getName(data)
         if (nameFromData != null && nameFromData != mDungeonName) {
+            updateMap[OrnaViewUpdateType.DUNGEON_NEW_DUNGEON] = null
+            updateResults(updateMap)
             return true
         }
 
@@ -98,7 +100,7 @@ class OrnaViewDungeonEntry : OrnaView {
         }
 
         if (data.any { it.name.lowercase().contains("victory") }) {
-            if (!mVictoryScreenHandledForFloor && mbEntered) {
+            if (!mVictoryScreenHandledForFloor) {
                 Log.d(this.javaClass.toString().split(".").last(), this.toString() + " victory!")
                 parseLoot(data, updateMap)
                 mVictoryScreenHandledForFloor = true
@@ -112,7 +114,7 @@ class OrnaViewDungeonEntry : OrnaView {
             if (match != null && match.groups.size == 3) {
                 val number = match.groups[1]?.value?.toInt()
                 val outOf = match.groups[2]?.value?.toInt()
-                if (!mbEntered && (number == 1) && !defeat) {
+                if ((!mbEntered && (number == 1) && !defeat) || (!mbEntered && !mbEnteringNewDungeon)) {
                     mbEntered = true
                     updateMap[OrnaViewUpdateType.DUNGEON_ENTERED] = null
                 }
