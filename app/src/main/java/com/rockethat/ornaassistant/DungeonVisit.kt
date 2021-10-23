@@ -11,6 +11,7 @@ class DungeonVisit(var sessionID: Long?, val name: String, var mode: DungeonMode
     var experience: Long = 0
     var floor: Long = 0
     var godforges: Long = 0
+    var completed = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     var mStarted: LocalDateTime = LocalDateTime.now()

@@ -21,8 +21,10 @@ import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
 import android.util.Log
 import com.rockethat.ornaassistant.ui.fragment.MainFragment
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tableLayout: TabLayout
@@ -78,8 +80,6 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
-
-        isAccessibilityEnabled()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -109,6 +109,12 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
+
+        if (!isAccessibilityEnabled())
+        {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
+
         when (tableLayout.selectedTabPosition) {
             0 -> {
                 if (adapter.frags.size >= 1) {

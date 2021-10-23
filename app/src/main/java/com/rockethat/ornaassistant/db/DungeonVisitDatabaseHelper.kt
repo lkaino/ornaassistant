@@ -15,7 +15,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 
 class DungeonVisitDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, 2) {
+    SQLiteOpenHelper(context, DATABASE_NAME, null, VERSION) {
 
     /**
      * Our onCreate() method.
@@ -38,6 +38,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
                     "experience INTEGER," +
                     "floor INTEGER," +
                     "godforges INTEGER" +
+                    "completed INTEGER" +
                     ")"
         )
     }
@@ -49,8 +50,10 @@ class DungeonVisitDatabaseHelper(context: Context) :
      * to upgrade to the new schema version.
      */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(db)
+        if (oldVersion == 2 && newVersion == 3)
+        {
+            db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COL_13 INTEGER DEFAULT 0");
+        }
     }
 
     /**
@@ -72,6 +75,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
         contentValues.put(COL_10, entry.experience)
         contentValues.put(COL_11, entry.floor)
         contentValues.put(COL_12, entry.godforges)
+        contentValues.put(COL_13, if (entry.completed) 1 else 0)
         db.insert(TABLE_NAME, null, contentValues)
     }
 
@@ -95,6 +99,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
         contentValues.put(COL_10, entry.experience)
         contentValues.put(COL_11, entry.floor)
         contentValues.put(COL_12, entry.godforges)
+        contentValues.put(COL_13, if (entry.completed) 1 else 0)
         db.update(TABLE_NAME, contentValues, "ID = ?", arrayOf(id))
         return true
     }
@@ -138,6 +143,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
             val experience = cur.getLong(col++)
             val floor = cur.getLong(col++)
             val godforges = cur.getLong(col++)
+            val completed = cur.getInt(col++) == 1
 
             val mode = DungeonMode(DungeonMode.Modes.valueOf(type))
             mode.mbHard = hard
@@ -149,6 +155,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
             visit.experience = experience
             visit.floor = floor
             visit.godforges = godforges
+            visit.completed = completed
 
             list.add(visit)
         }
@@ -205,5 +212,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
         val COL_10 = "experience"
         val COL_11 = "floor"
         val COL_12 = "godforges"
+        val COL_13 = "completed"
+        val VERSION = 3
     }
 }

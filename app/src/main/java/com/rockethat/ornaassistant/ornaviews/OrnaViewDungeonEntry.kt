@@ -88,11 +88,13 @@ class OrnaViewDungeonEntry : OrnaView {
             bDone = true
         }
 
+        var defeat = false
         if (data.any { it.name.lowercase().contains("defeat") }) {
             Log.d(this.javaClass.toString().split(".").last(), this.toString())
-            updateMap[OrnaViewUpdateType.DUNGEON_DONE] = null
+            updateMap[OrnaViewUpdateType.DUNGEON_FAIL] = null
             mbDone = true
             bDone = true
+            defeat = true
         }
 
         if (data.any { it.name.lowercase().contains("victory") }) {
@@ -110,7 +112,7 @@ class OrnaViewDungeonEntry : OrnaView {
             if (match != null && match.groups.size == 3) {
                 val number = match.groups[1]?.value?.toInt()
                 val outOf = match.groups[2]?.value?.toInt()
-                if (!mbEntered && (number == 1)) {
+                if (!mbEntered && (number == 1) && !defeat) {
                     mbEntered = true
                     updateMap[OrnaViewUpdateType.DUNGEON_ENTERED] = null
                 }

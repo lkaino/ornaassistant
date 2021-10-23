@@ -33,8 +33,9 @@ class MyAccessibilityService() : AccessibilityService() {
             inflater.inflate(R.layout.notification_layout, null),
             inflater.inflate(R.layout.wayvessel_overlay, null),
             inflater.inflate(R.layout.kg_layout, null),
-            inflater.inflate(R.layout.assess_layout, null)
-            )
+            inflater.inflate(R.layout.assess_layout, null),
+            this
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -55,8 +56,9 @@ class MyAccessibilityService() : AccessibilityService() {
             return
         }*/
 
-        if (p0.packageName.toString().contains("discord") && p0.eventType != AccessibilityEvent.TYPE_VIEW_CLICKED)
-        {
+        if (p0.packageName.toString()
+                .contains("discord") && p0.eventType != AccessibilityEvent.TYPE_VIEW_CLICKED
+        ) {
             return
         }
 
@@ -150,7 +152,11 @@ class MyAccessibilityService() : AccessibilityService() {
         info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
         info.notificationTimeout = 500
         //info.interactiveUiTimeoutMillis = 1
-        info.packageNames = listOf("playorna.com.orna", "com.discord").toTypedArray()
+        info.packageNames = listOf(
+            "playorna.com.orna",
+            "com.discord",
+            "com.rockethat.ornaassistant"
+        ).toTypedArray()
         this.serviceInfo = info
 
         Log.i(TAG, "onServiceConnected called")

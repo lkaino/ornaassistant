@@ -2,6 +2,7 @@ package com.rockethat.ornaassistant.ui.fragment
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
@@ -25,7 +26,9 @@ import java.time.LocalDate
 import android.content.res.Resources.Theme
 
 import android.util.TypedValue
+import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
+import com.rockethat.ornaassistant.DungeonVisit
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,6 +46,7 @@ class MainFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var mDb: DungeonVisitDatabaseHelper
+    private lateinit var mSharedPreference: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +55,7 @@ class MainFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
         mDb = DungeonVisitDatabaseHelper(context as Context)
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(context)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -96,6 +101,7 @@ class MainFragment : Fragment() {
         val chart: BarChart = view?.findViewById(R.id.cWeeklyDungeons) as BarChart
 
         val eDung = mutableListOf<BarEntry>()
+        val eFailedDung = mutableListOf<BarEntry>()
         val eOrns = mutableListOf<BarEntry>()
 
         val startOfToday = LocalDate.now().atStartOfDay()
@@ -105,7 +111,12 @@ class MainFragment : Fragment() {
                 startOfToday.minusDays(i.toLong()),
                 startOfToday.minusDays((i - 1).toLong())
             )
-            eDung.add(BarEntry(i.toFloat(), entries.size.toFloat()))
+
+            val completed = entries.filter { it.completed } as ArrayList<DungeonVisit>
+            val failed = entries.filter { !it.completed } as ArrayList<DungeonVisit>
+
+            eDung.add(BarEntry(i.toFloat(), completed.size.toFloat()))
+            eFailedDung.add(BarEntry(i.toFloat(), failed.size.toFloat()))
             var orns = 0f
             entries.forEach {
                 orns += it.orns
@@ -119,21 +130,26 @@ class MainFragment : Fragment() {
             textColor = Color.LTGRAY
         }
         val sDung = BarDataSet(eDung, "Dungeons")
+        val sFailedDung = BarDataSet(eFailedDung, "Failed dungeons")
         val sOrns = BarDataSet(eOrns, "Orns gained (mil)")
         sDung.valueFormatter = IntegerFormatter()
+        sFailedDung.valueFormatter = IntegerFormatter()
         sDung.valueTextSize = 12f
+        sFailedDung.valueTextSize = 12f
         sOrns.valueTextSize = 12f
         sDung.color = Color.parseColor("#ff6d00")
+        sFailedDung.color = Color.parseColor("#c62828")
         sOrns.color = Color.parseColor("#558b2f")
 
         sDung.valueTextColor = textColor
+        sFailedDung.valueTextColor = textColor
         sOrns.valueTextColor = textColor
-        val data = BarData(sDung, sOrns)
+        val data = BarData(sDung, sFailedDung, sOrns)
 
         val groupSpace = 0.06f
         val barSpace = 0.02f // x2 dataset
 
-        val barWidth = 0.45f
+        val barWidth = 0.29f
         // (0.02 + 0.45) * 2 + 0.06 = 1.00 -> interval per "group"
 
         data.barWidth = barWidth // x2 dataset

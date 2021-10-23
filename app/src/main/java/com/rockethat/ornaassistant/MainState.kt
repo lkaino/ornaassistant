@@ -1,5 +1,6 @@
 package com.rockethat.ornaassistant
 
+import android.accessibilityservice.AccessibilityService
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -18,7 +19,6 @@ import com.rockethat.ornaassistant.overlays.SessionOverlay
 import android.content.SharedPreferences
 import android.media.AudioAttributes
 import android.net.Uri
-import android.provider.Settings.Global.getString
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
@@ -27,8 +27,6 @@ import com.rockethat.ornaassistant.overlays.AssessOverlay
 import org.json.JSONObject
 import java.util.concurrent.LinkedBlockingDeque
 import kotlin.concurrent.thread
-import android.media.MediaPlayer
-import androidx.legacy.content.WakefulBroadcastReceiver
 import androidx.work.*
 import java.util.concurrent.TimeUnit
 
@@ -40,7 +38,8 @@ class MainState(
     mNotificationView: View,
     mSessionView: View,
     mKGView: View,
-    mAssessView: View
+    mAssessView: View,
+    mAS: AccessibilityService
 ) {
     private val TAG = "OrnaMainState"
     private val CHANNEL_ID = "ornaassistant_channel_"
@@ -49,6 +48,7 @@ class MainState(
     private var mCurrentView: OrnaView? = null
     private var mDungeonVisit: DungeonVisit? = null
     private var mSession: WayvesselSession? = null
+    private var mBattle = Battle(mAS)
 
     private val mShuffleRes = listOf(
         R.raw.shuffle_1,
@@ -226,7 +226,8 @@ class MainState(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun processUpdate(update: MutableMap<OrnaViewUpdateType, Any?>) {
-        var done = false
+        var dungeonDone = false
+        var dungeonFailed = false
         update.forEach { (type, data) ->
             when (type) {
                 OrnaViewUpdateType.DUNGEON_ENTERED -> {
@@ -256,7 +257,14 @@ class MainState(
                     if (mSession == null) {
                         mSessionOverlay.hide()
                     }
-                    done = true
+                    dungeonDone = true
+                }
+                OrnaViewUpdateType.DUNGEON_FAIL -> if (mDungeonVisit != null) {
+                    if (mSession == null) {
+                        mSessionOverlay.hide()
+                    }
+                    dungeonDone = true
+                    dungeonFailed = true
                 }
                 OrnaViewUpdateType.DUNGEON_NEW_FLOOR -> if (mDungeonVisit != null) mDungeonVisit!!.floor =
                     (data as Int).toLong()
@@ -295,8 +303,9 @@ class MainState(
             }
         }
 
-        if (done) {
+        if (dungeonDone) {
             if (mDungeonVisit != null) {
+                mDungeonVisit!!.completed = !dungeonFailed
                 mDungeonVisit!!.finish()
                 mDungeonDbHelper.insertData(mDungeonVisit!!)
                 Log.i(TAG, "Stored: $mDungeonVisit")
