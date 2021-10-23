@@ -34,11 +34,4 @@
             android:summary="Notification when kingdom gauntlet shuffle cooldown period has passed."
             android:title="Shuffle notification" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:title="Main window">
-        <CheckBoxPreference
-            android:key="onlyCompletedDungeons"
-            android:summary="Count only completed dungeons in the main window statistics."
-            android:title="Only completed dungeons" />
-    </PreferenceCategory>
 </PreferenceScreen>
