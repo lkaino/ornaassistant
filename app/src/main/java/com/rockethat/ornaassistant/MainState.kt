@@ -354,20 +354,23 @@ class MainState(
         ) {
             var shuffle = false
 
-            Log.i(TAG, "mKingdomGauntlet (${items.size}): ${mKingdomGauntlet.mList}")
+            /*Log.i(TAG, "mKingdomGauntlet (${items.size}): ${mKingdomGauntlet.mList}")
             Log.i(TAG, "new (${items.size}): ${new.mList}")
             Log.i(TAG, "uniqueThis: $uniqueThis")
-            Log.i(TAG, "uniqueOther: $uniqueOther")
+            Log.i(TAG, "uniqueOther: $uniqueOther")*/
 
             if ((uniqueThis.size == 1) && (uniqueThis.first().floors.size == 1)) {
                 Log.i(TAG, "One floor was removed!")
                 // One floor was removed
-                val otherMember = uniqueOther.firstOrNull { it.floors.containsKey(40) }
+                var lastFloor = 0
+                items.forEach { it.floors.forEach{f -> if (lastFloor < f.key) lastFloor = f.key} }
+
+                val otherMember = uniqueOther.firstOrNull { it.floors.containsKey(lastFloor) }
                 if (otherMember != null) {
                     // One of the new floors contains floor 40, this is a shuffle
                     Log.i(
                         TAG,
-                        "One of the new floors contains floor 40, this is a shuffle"
+                        "One of the new floors contains floor $lastFloor, this is a shuffle"
                     )
                     if (mSharedPreference.getBoolean("discord", true)) {
                         shuffle = true
