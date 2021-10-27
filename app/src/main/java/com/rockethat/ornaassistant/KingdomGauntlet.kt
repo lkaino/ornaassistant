@@ -115,7 +115,7 @@ class KingdomGauntlet(val mCtx: Context) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createKGDiscordPost() {
-        var text = ""
+        var text = "**Please do your KG!**\r\n"
 
         mList.forEach {
             if (it.floors.filterValues { !it.loss }.filterValues { !it.win }.isNotEmpty()) {
@@ -145,12 +145,12 @@ class KingdomGauntlet(val mCtx: Context) {
 
                 text += "@${it.discordName}   "
 
-                text += if (it.floors.size == 1) {
-                    "__**${it.floors.size}**__ floor: "
+                text += if (it.numFloors == 1) {
+                    "__**${it.numFloors}**__ floor: "
                 } else {
-                    "__**${it.floors.size}**__ floors: "
+                    "__**${it.numFloors}**__ floors: "
                 }
-                var floors = mutableListOf<String>()
+                val floors = mutableListOf<String>()
                 it.floors.forEach { (floorNum, floor) ->
                     if (!floor.loss && !floor.win) {
                         if (floor.mobName.lowercase().contains("berserk")) {
