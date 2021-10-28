@@ -82,6 +82,8 @@ class MainState(
     @RequiresApi(Build.VERSION_CODES.N)
     var mKingdomGauntlet = KingdomGauntlet(mCtx)
 
+    var mInBattle = LocalDateTime.now().minusDays(1)
+
     var sharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
@@ -121,6 +123,12 @@ class MainState(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleOrnaData(data: ArrayList<ScreenData>) {
+        if (Battle.inBattle(data))
+        {
+            mInBattle = LocalDateTime.now()
+            if (mKGOverlay.isVisible()) mKGOverlay.hide()
+        }
+
         updateView(data)
 
         val wayvessel = data.filter { it.name.lowercase().contains("'s wayvessel") }.firstOrNull()
@@ -338,6 +346,12 @@ class MainState(
         val uniqueOther = mutableListOf<KingdomMember>()
         new.updateItems(items)
         mKingdomGauntlet.diffFloors(new, uniqueThis, uniqueOther)
+
+        if (dtNow.isBefore(mInBattle.plusSeconds(2)))
+        {
+            // Player has been recently in battle, do nothing
+            return
+        }
 
         if (dtNow.isBefore(mKingdomGauntlet.mLastUpdate.plusSeconds(30)) &&
             uniqueThis.size > 1

@@ -45,6 +45,13 @@ class OrnaViewDungeonEntry : OrnaView {
             }
         }
 
+        if (name == null) {
+            if (data.any { it.name.startsWith("Battle a series of opponents") } &&
+                data.any { it.name == "Runeshop" }) {
+                name = "Personal gauntlet"
+            }
+        }
+
         return name
     }
 
@@ -110,10 +117,10 @@ class OrnaViewDungeonEntry : OrnaView {
         val floor = data.filter { it.name.lowercase().contains("floor") }.firstOrNull()
         if (floor != null) {
             // Floor: 18 / 22
-            val match = Regex("Floor:\\s([0-9]+)\\s/\\s([0-9]+)").findAll(floor.name).firstOrNull()
+            val match =
+                Regex("Floor:\\s([0-9]+)\\s/\\s([0-9]+|∞)").findAll(floor.name).firstOrNull()
             if (match != null && match.groups.size == 3) {
                 val number = match.groups[1]?.value?.toInt()
-                val outOf = match.groups[2]?.value?.toInt()
                 if ((!mbEntered && (number == 1) && !defeat) || (!mbEntered && !mbEnteringNewDungeon)) {
                     mbEntered = true
                     updateMap[OrnaViewUpdateType.DUNGEON_ENTERED] = null

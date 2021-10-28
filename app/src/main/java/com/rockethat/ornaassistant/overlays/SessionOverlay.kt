@@ -13,10 +13,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rockethat.ornaassistant.DungeonVisit
-import com.rockethat.ornaassistant.KingdomMember
-import com.rockethat.ornaassistant.R
-import com.rockethat.ornaassistant.WayvesselSession
+import com.rockethat.ornaassistant.*
 import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
 import com.rockethat.ornaassistant.db.WayvesselSessionDatabaseHelper
 import com.rockethat.ornaassistant.viewadapters.KGAdapter
@@ -34,6 +31,7 @@ class SessionOverlay(
 ) :
     Overlay(mWM, mCtx, mView, mWidth) {
 
+    var mGoldHeaderTv = mView.findViewById<TextView>(R.id.tvGold)
     var mSessionHeaderTv = mView.findViewById<TextView>(R.id.tvSessionHeader)
     var mSessionTv = mView.findViewById<TextView>(R.id.tvSession)
     var mSessionGoldTv = mView.findViewById<TextView>(R.id.tvGoldSession)
@@ -75,7 +73,14 @@ class SessionOverlay(
                 mSessionHeaderTv.text = "@${session.name}"
                 if (session.mDungeonsVisited > 1) {
                     mSessionTv.text = "${session.mDungeonsVisited} dungeons"
-                    mSessionGoldTv.text = createSessionGoldOrnNumberString(session.gold)
+                    if (dungeonVisit != null && dungeonVisit.mode.mMode == DungeonMode.Modes.ENDLESS)
+                    {
+                        mSessionGoldTv.text = createSessionGoldOrnNumberString(session.experience)
+                    }
+                    else
+                    {
+                        mSessionGoldTv.text = createSessionGoldOrnNumberString(session.gold)
+                    }
                     mSessionOrnTv.text = createSessionGoldOrnNumberString(session.orns)
                     mSessionTv.visibility = View.VISIBLE
                     mSessionGoldTv.visibility = View.VISIBLE
@@ -95,7 +100,16 @@ class SessionOverlay(
             }
 
             if (dungeonVisit != null) {
-                mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.gold)
+                if (dungeonVisit.mode.mMode == DungeonMode.Modes.ENDLESS)
+                {
+                    mGoldHeaderTv.text = "Exp"
+                    mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.experience)
+                }
+                else
+                {
+                    mGoldHeaderTv.text = "Gold"
+                    mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.gold)
+                }
                 mDungeonOrnTv.text = createSessionGoldOrnNumberString(dungeonVisit.orns)
             } else {
                 if (session == null) {

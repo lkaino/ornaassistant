@@ -20,4 +20,11 @@ class Battle(private val mAS: AccessibilityService) {
 
     fun update(data: ArrayList<ScreenData>) {
     }
+
+    companion object {
+        fun inBattle(data: ArrayList<ScreenData>): Boolean
+        {
+            return data.any { it.name == "Codex" } && data.any{ it.name == "SKILL"}
+        }
+    }
 }
