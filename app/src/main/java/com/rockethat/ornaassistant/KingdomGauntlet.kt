@@ -83,8 +83,7 @@ class KingdomGauntlet(val mCtx: Context) {
                         }
                     }
 
-                    if (notDoneFloors)
-                    {
+                    if (notDoneFloors) {
                         kgDB.insertData(dt, member.character)
                     }
                 }
@@ -202,17 +201,28 @@ class KingdomGauntlet(val mCtx: Context) {
                         bNames = true
                     }
                 } else if (date != null) {
-                    val match =
-                        Regex("([*]?)\\s+([0-9]+)h([0-9]+)m\\s(.*)").findAll(
-                            it
-                        ).firstOrNull()
-                    if (match != null && match.groups.size == 5) {
+                    var expectedMatches = 5
+                    var match =
+                        Regex("([*]?)\\s+([0-9]+)h([0-9]+)m\\s(.*)").findAll(it).firstOrNull()
+                    if (match == null) {
+                        expectedMatches = 4
+                        match = Regex("([*]?)\\s+([0-9]+)m\\s(.*)").findAll(it).firstOrNull()
+                    }
+                    if (match != null && match.groups.size == expectedMatches) {
                         val immunity = match.groups[1]?.value
-                        val hours = match.groups[2]?.value?.toLong()
-                        val minutes = match.groups[3]?.value?.toLong()
-                        val name = match.groups[4]?.value
-                        if (hours != null && minutes != null && name != null) {
-                            val endTime = date!!.plusHours(hours).plusMinutes(minutes)
+                        var hours: Long? = null
+                        if (expectedMatches == 5)
+                        {
+                            hours = match.groups[2]?.value?.toLong()
+                        }
+                        val minutes = match.groups[expectedMatches - 2]?.value?.toLong()
+                        val name = match.groups[expectedMatches - 1]?.value
+                        if (minutes != null && name != null) {
+                            var endTime = date!!.plusMinutes(minutes)
+                            if (hours != null)
+                            {
+                                endTime = endTime.plusHours(hours)
+                            }
                             val sleeper =
                                 Sleeper(name, immunity != null && immunity == "*", endTime)
                             mSleepers[name] = sleeper
