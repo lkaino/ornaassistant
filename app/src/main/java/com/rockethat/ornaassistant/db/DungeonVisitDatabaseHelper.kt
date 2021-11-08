@@ -37,7 +37,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
                     "gold INTEGER," +
                     "experience INTEGER," +
                     "floor INTEGER," +
-                    "godforges INTEGER" +
+                    "godforges INTEGER," +
                     "completed INTEGER" +
                     ")"
         )

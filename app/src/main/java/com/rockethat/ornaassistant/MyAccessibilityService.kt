@@ -12,6 +12,11 @@ import android.view.LayoutInflater
 import androidx.annotation.RequiresApi
 import kotlin.collections.ArrayList
 import kotlin.system.measureTimeMillis
+import android.net.Uri
+import androidx.core.app.ActivityCompat.startActivityForResult
+
+import android.content.Intent
+import androidx.core.app.ActivityCompat
 
 
 class MyAccessibilityService() : AccessibilityService() {
@@ -26,7 +31,6 @@ class MyAccessibilityService() : AccessibilityService() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
-
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         state = MainState(
             getSystemService(WINDOW_SERVICE) as WindowManager, applicationContext,

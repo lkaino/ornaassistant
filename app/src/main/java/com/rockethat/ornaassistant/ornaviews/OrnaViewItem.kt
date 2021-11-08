@@ -159,7 +159,7 @@ class OrnaViewItem : OrnaView {
                 name = name.replace(prefix.capitalize() + " ", "")
             }
         }
-
+        
         itemName = name
     }
 
@@ -173,7 +173,11 @@ class OrnaViewItem : OrnaView {
             } else if (item.name.contains("Level")) {
                 level = item.name.replace("Level ", "").toInt()
             } else {
-                var text = item.name.replace("−", "-").replace(" ", "")
+                var text = item.name
+                    .replace("−", "-")
+                    .replace(" ", "")
+                    .replace(",", "")
+                    .replace(".", "")
                 val match = Regex("([A-Za-z\\s]+):\\s(-?[0-9]+)").findAll(text)
                 match.forEach {
                     if (it.groups.size == 3) {
@@ -221,12 +225,15 @@ class OrnaViewItem : OrnaView {
         when (attName) {
             "HP" -> params["hp"] = attValue
             "Mana" -> params["mana"] = attValue
-            "Mana" -> params["mana"] = attValue
+            "Mag" -> params["magic"] = attValue
             "Att" -> params["attack"] = attValue
             "Def" -> params["defense"] = attValue
             "Res" -> params["resistance"] = attValue
             "Dex" -> params["dexterity"] = attValue
-            else -> return
+            else -> {
+                Log.d(TAG, "Invalid attribute $attName")
+                return
+            }
         }
         params["level"] = level
         val jsonObject = JSONObject(params as Map<*, *>)

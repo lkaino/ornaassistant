@@ -20,6 +20,10 @@ import com.rockethat.ornaassistant.viewadapters.NotificationsAdapter
 import com.rockethat.ornaassistant.viewadapters.NotificationsItem
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.temporal.TemporalField
+import java.time.temporal.WeekFields
+import java.time.temporal.WeekFields.ISO
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 class InviterOverlay(
@@ -111,11 +115,21 @@ class InviterOverlay(
                 }
                 dur = Duration.between(LocalDateTime.now(), cdEnd)
 
-                val hours = dur.toMinutes().toInt() / 60
-                val minutes = kotlin.math.abs(dur.toMinutes().toInt() % 60)
-                cooldownText = if (kotlin.math.abs(hours) < 24) "$hours:${
-                    minutes.toString().padStart(2, '0')
-                }" else ""
+                if (dur.toHours() < -24) {
+                    val woy: TemporalField =
+                        WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()
+                    val weekNumber: Int = cdEnd.get(woy)
+                    val weekNumberNow: Int = LocalDateTime.now().get(woy)
+                    if (weekNumber < weekNumberNow) {
+                        cooldownText = "Last week"
+                    } else {
+                        cooldownText = "${dur.toDays()} d"
+                    }
+                } else {
+                    val hours = dur.toMinutes().toInt() / 60
+                    val minutes = kotlin.math.abs(dur.toMinutes().toInt() % 60)
+                    cooldownText = "$hours:${minutes.toString().padStart(2, '0')}"
+                }
                 newList.add(
                     NotificationsItem(
                         inviter,
