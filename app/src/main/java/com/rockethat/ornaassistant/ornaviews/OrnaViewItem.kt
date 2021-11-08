@@ -159,7 +159,7 @@ class OrnaViewItem : OrnaView {
                 name = name.replace(prefix.capitalize() + " ", "")
             }
         }
-        
+
         itemName = name
     }
 
