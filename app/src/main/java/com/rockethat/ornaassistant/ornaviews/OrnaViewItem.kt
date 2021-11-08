@@ -209,36 +209,28 @@ class OrnaViewItem : OrnaView {
         val url = "https://orna.guide/api/v1/assess"
         val start = System.currentTimeMillis()
 
-        var attName = ""
-        var attValue = 0
-        attributes!!.forEach { (k, v) ->
-            if (v > attValue) {
-                attName = k
-                attValue = v
+        val params = HashMap<String, Any>()
+        attributes!!.forEach { (attName, attValue) ->
+            when (attName) {
+                "HP" -> params["hp"] = attValue
+                "Mana" -> params["mana"] = attValue
+                "Mag" -> params["magic"] = attValue
+                "Att" -> params["attack"] = attValue
+                "Def" -> params["defense"] = attValue
+                "Res" -> params["resistance"] = attValue
+                "Dex" -> params["dexterity"] = attValue
+                "Crit" -> {}
+                else -> {
+                    Log.d(TAG, "Invalid attribute $attName")
+                    return
+                }
             }
         }
 
-        // Post parameters
-        // Form fields and values
-        val params = HashMap<String, Any>()
         params["name"] = itemName!!
-        when (attName) {
-            "HP" -> params["hp"] = attValue
-            "Mana" -> params["mana"] = attValue
-            "Mag" -> params["magic"] = attValue
-            "Att" -> params["attack"] = attValue
-            "Def" -> params["defense"] = attValue
-            "Res" -> params["resistance"] = attValue
-            "Dex" -> params["dexterity"] = attValue
-            else -> {
-                Log.d(TAG, "Invalid attribute $attName")
-                return
-            }
-        }
         params["level"] = level
         val jsonObject = JSONObject(params as Map<*, *>)
         Log.d(TAG, "Assessing item ${jsonObject}")
-
 
         // Volley post request with parameters
         Log.v(TAG, "POSTING request!")
