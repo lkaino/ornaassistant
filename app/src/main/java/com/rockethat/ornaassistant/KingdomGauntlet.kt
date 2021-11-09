@@ -13,6 +13,7 @@ import java.time.LocalDateTime
 import java.util.ArrayList
 import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.math.floor
+import me.xdrop.fuzzywuzzy.FuzzySearch
 
 @RequiresApi(Build.VERSION_CODES.N)
 class KingdomGauntlet(val mCtx: Context) {
@@ -40,11 +41,24 @@ class KingdomGauntlet(val mCtx: Context) {
             }
 
             var sleeper: Sleeper? = null
+            var highestRatio: Int = 0
+            var highestRatioDiscordName = ""
+
             mSleepers.keys.forEach { sleeperDiscordName ->
-                if (sleeperDiscordName.lowercase().contains(it.character.lowercase())) {
-                    sleeper = mSleepers[sleeperDiscordName]
+                val ratio = FuzzySearch.ratio(sleeperDiscordName.lowercase(), it.character.lowercase())
+                if (ratio > highestRatio)
+                {
+                    highestRatio = ratio
+                    highestRatioDiscordName = sleeperDiscordName
                 }
             }
+
+            if (highestRatio > 50)
+            {
+                Log.i(TAG, " ${it.character} = $highestRatioDiscordName, ratio = $highestRatio")
+                sleeper = mSleepers[highestRatioDiscordName]
+            }
+
             if (sleeper == null && mSleepers.containsKey(discordName)) {
                 sleeper = mSleepers[discordName]
             }

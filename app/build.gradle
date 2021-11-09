@@ -64,4 +64,5 @@ dependencies {
     //implementation files('libs/AnyChart-Android-1.1.4.aar')
     implementation files('libs/MPAndroidChart-v3.1.0.aar')
     //implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'me.xdrop:fuzzywuzzy:1.3.1'
 }
