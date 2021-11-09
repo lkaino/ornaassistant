@@ -32,6 +32,7 @@ class KGAdapter(
         val immunityText = itemView.findViewById<TextView>(R.id.kgImmunity)
         val sleeptimeText = itemView.findViewById<TextView>(R.id.kgSleepTime)
         val seenCountText = itemView.findViewById<TextView>(R.id.kgSeenCount)
+        val localTimeText = itemView.findViewById<TextView>(R.id.kgLocalTime)
 
         override fun onClick(p0: View?) {
             clickListener()
@@ -67,6 +68,7 @@ class KGAdapter(
             holder.sleeptimeText,
             holder.immunityText,
             holder.seenCountText,
+            holder.localTimeText,
         )
 
         var typeface = Typeface.NORMAL
@@ -90,6 +92,7 @@ class KGAdapter(
         holder.immunityText.text = item.immunity
         holder.sleeptimeText.text = item.sleeptime
         holder.seenCountText.text = item.seenCount
+        holder.localTimeText.text = item.localTime
 
         if (position > 0 && item.zerk) {
             holder.nameText.setTextColor(Color.RED)

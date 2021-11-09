@@ -13,6 +13,7 @@ import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.viewadapters.KGAdapter
 import com.rockethat.ornaassistant.viewadapters.KGItem
+import java.time.*
 
 class KGOverlay(
     mWM: WindowManager,
@@ -47,12 +48,13 @@ class KGOverlay(
                 "Player",
                 "Floors",
                 "Im",
+                "Local time",
                 "Sleep",
                 false,
                 "Seen"
             )
         )
-
+        val nowUTC = OffsetDateTime.now( ZoneOffset.UTC )
         data.forEach { it ->
             var sleeptime = ""
             if (it.endTimeLeftSeconds > 0) {
@@ -61,19 +63,25 @@ class KGOverlay(
                 sleeptime = "${sleepHours}h ${sleepMinutes}m"
             }
 
+            var localTime = ""
+            if (it.timezone < 1000)
+            {
+                val time = nowUTC.plusHours(it.timezone.toLong())
+                localTime = "${time.hour}.${time.minute.toString().padStart(2, '0')}"
+            }
             var floorTexts = mutableListOf<String>()
             val floors =
                 it.floors.filterValues { f -> !f.loss }.filterValues { f -> !f.win }.forEach { f ->
                     floorTexts.add(f.value.number.toString())
                 }
 
-            if (floorTexts.isNotEmpty())
-            {
+            if (floorTexts.isNotEmpty()) {
                 list.add(
                     KGItem(
                         it.character,
                         floorTexts.joinToString(", "),
                         if (it.immunity) "⭐" else "",
+                        localTime,
                         sleeptime,
                         it.zerk,
                         it.seenCount.toString()

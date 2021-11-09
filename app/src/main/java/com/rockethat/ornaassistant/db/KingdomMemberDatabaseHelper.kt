@@ -8,25 +8,29 @@ import androidx.annotation.RequiresApi
 import com.rockethat.ornaassistant.KingdomGauntletFloor
 import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.WayvesselSession
+import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
 import com.rockethat.ornaassistant.db.WayvesselSessionDatabaseHelper
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class KingdomMemberDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, 1) {
+    SQLiteOpenHelper(context, DATABASE_NAME, null, VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             "CREATE TABLE $TABLE_NAME (" +
-                    "ign TEXT PRIMARY KEY," +
-                    "discord TEXT" +
+                    "$COL_1 TEXT PRIMARY KEY," +
+                    "$COL_2 TEXT," +
+                    "$COL_3 INTEGER" +
                     ")"
         )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(db)
+        if (oldVersion == 1 && newVersion == 2)
+        {
+            db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COL_3 INTEGER DEFAULT 1000");
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -39,6 +43,7 @@ class KingdomMemberDatabaseHelper(context: Context) :
         } else {
             contentValues.put(COL_1, entry.character.replace("'", "''"))
             contentValues.put(COL_2, entry.discordName.replace("'", "''"))
+            contentValues.put(COL_3, entry.timezone)
 
             db.insert(TABLE_NAME, null, contentValues)
         }
@@ -61,16 +66,17 @@ class KingdomMemberDatabaseHelper(context: Context) :
         val db = this.writableDatabase
 
         val existing = getEntry(entry.character)
-        if (existing != null && existing.discordName == entry.discordName)
+        if (existing != null && existing.discordName == entry.discordName && existing.timezone == entry.timezone)
         {
             return false
         }
         else
         {
             val contentValues = ContentValues()
-            contentValues.put(COL_1, entry.character)
-            contentValues.put(COL_2, entry.discordName)
-            db.update(TABLE_NAME, contentValues, "ign = ?", arrayOf(entry.character))
+            contentValues.put(COL_1, entry.character.replace("'", "''"))
+            contentValues.put(COL_2, entry.discordName.replace("'", "''"))
+            contentValues.put(COL_3, entry.timezone)
+            db.update(TABLE_NAME, contentValues, "ign = ?", arrayOf(entry.character.replace("'", "''")))
         }
 
         return true
@@ -113,9 +119,11 @@ class KingdomMemberDatabaseHelper(context: Context) :
             var col = 0
             val ign = cur.getString(col++)
             val discord = cur.getString(col++)
+            val tz = cur.getInt(col++)
 
             val member = KingdomMember(ign, mutableMapOf())
             member.discordName = discord
+            member.timezone = tz
 
             list.add(member)
         }
@@ -129,5 +137,8 @@ class KingdomMemberDatabaseHelper(context: Context) :
         val TABLE_NAME = "kingdom_member"
         val COL_1 = "ign"
         val COL_2 = "discord"
+        val COL_3 = "tz"
+        val VERSION = 2
+
     }
 }

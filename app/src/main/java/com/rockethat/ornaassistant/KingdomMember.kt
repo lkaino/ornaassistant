@@ -23,6 +23,7 @@ data class KingdomMember(val character: String, var floors: MutableMap<Int, King
     var endTimeLeftSeconds: Long = 0
     var discordName = ""
     var seenCount = 0
+    var timezone: Int = 1000
     val numFloors
         get() = floors.filterValues { floor -> !floor.loss && !floor.win }.size
     val zerk
