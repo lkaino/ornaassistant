@@ -52,8 +52,9 @@ class KingdomGauntlet(val mCtx: Context) {
             var highestRatioDiscordName = ""
 
             mSleepers.keys.forEach { sleeperDiscordName ->
+                val cleanSleeperDiscordName = sleeperDiscordName.replaceAfter('#', "")
                 val ratio =
-                    FuzzySearch.ratio(sleeperDiscordName.lowercase(), it.character.lowercase())
+                    FuzzySearch.ratio(cleanSleeperDiscordName.lowercase(), it.character.lowercase())
                 if (ratio > highestRatio) {
                     highestRatio = ratio
                     highestRatioDiscordName = sleeperDiscordName
@@ -256,6 +257,7 @@ class KingdomGauntlet(val mCtx: Context) {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun handleDiscordSleepers(data: ArrayList<ScreenData>)
     {
         if (data.size == 1 && data[0].name.contains("Sleepers")) {
