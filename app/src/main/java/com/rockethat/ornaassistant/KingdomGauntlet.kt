@@ -27,6 +27,10 @@ class KingdomGauntlet(val mCtx: Context) {
     var mLastUpdate = LocalDateTime.now()
 
     @RequiresApi(Build.VERSION_CODES.O)
+    private var mLastTimeZoneUpdate = LocalDateTime.now()
+    private val mDiscordTimeZones = mutableMapOf<String, Int>()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun updateItems(items: List<KingdomMember>): List<KingdomMember> {
         val kmDB = KingdomMemberDatabaseHelper(mCtx)
         val dbList = kmDB.allData
@@ -176,12 +180,14 @@ class KingdomGauntlet(val mCtx: Context) {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private var mLastTimeZoneUpdate = LocalDateTime.now()
-
-    private val mDiscordTimeZones = mutableMapOf<String, Int>()
+    fun handleDiscordData(data: ArrayList<ScreenData>) {
+        handleDiscordTimezones(data)
+        handleDiscordSleepers(data)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun handleDiscordData(data: ArrayList<ScreenData>) {
+    fun handleDiscordTimezones(data: ArrayList<ScreenData>)
+    {
         val secondsToCollectTimezones: Long = 5
 
         if (LocalDateTime.now()
@@ -216,32 +222,42 @@ class KingdomGauntlet(val mCtx: Context) {
             val kmDB = KingdomMemberDatabaseHelper(mCtx)
             val dbList = kmDB.allData
 
-            mDiscordTimeZones.forEach { (discordName, zone) ->
+            dbList.forEach { dbItem ->
                 var highestRatio: Int = 0
-                var highestRatioMember: KingdomMember? = null
+                var highestRatioDiscordName = ""
+                var highestRatioDiscordTZ: Int = 0
 
-                dbList.forEach {
+                mDiscordTimeZones.forEach { (discordName, zone) ->
                     val ratio =
-                        FuzzySearch.ratio(discordName.lowercase(), it.character.lowercase())
+                        FuzzySearch.ratio(discordName.lowercase(), dbItem.character.lowercase())
                     if (ratio > highestRatio) {
                         highestRatio = ratio
-                        highestRatioMember = it
+                        highestRatioDiscordName = discordName
+                        highestRatioDiscordTZ = zone
                     }
                 }
 
-                if (highestRatio > 60 && highestRatioMember != null)
+                if (highestRatioDiscordName.isNotBlank())
                 {
-                    Log.i(TAG, "$discordName == ${highestRatioMember!!.character}, ratio $highestRatio")
+                    Log.i(TAG, "${dbItem.character} == ${highestRatioDiscordName}, ratio $highestRatio")
 
-                    highestRatioMember!!.timezone = zone
-                    kmDB.updateData(highestRatioMember!!)
+                    if (highestRatio > 50)
+                    {
+                        dbItem.timezone = highestRatioDiscordTZ
+                        kmDB.updateData(dbItem)
+                    }
                 }
+
             }
 
             kmDB.close()
 
             mDiscordTimeZones.clear()
         }
+    }
+
+    fun handleDiscordSleepers(data: ArrayList<ScreenData>)
+    {
         if (data.size == 1 && data[0].name.contains("Sleepers")) {
             val sd = data[0]
             val split = sd.name.split("\n")
