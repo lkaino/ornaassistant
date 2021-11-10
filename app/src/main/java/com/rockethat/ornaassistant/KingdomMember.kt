@@ -1,5 +1,9 @@
 package com.rockethat.ornaassistant
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.time.LocalDateTime
+
 data class KingdomGauntletFloor(
     val number: Int,
     val mobName: String,
@@ -21,6 +25,8 @@ data class KingdomGauntletFloor(
 data class KingdomMember(val character: String, var floors: MutableMap<Int, KingdomGauntletFloor>) {
     var immunity: Boolean = false
     var endTimeLeftSeconds: Long = 0
+    @RequiresApi(Build.VERSION_CODES.O)
+    var endTime: LocalDateTime = LocalDateTime.now()
     var discordName = ""
     var seenCount = 0
     var timezone: Int = 1000
