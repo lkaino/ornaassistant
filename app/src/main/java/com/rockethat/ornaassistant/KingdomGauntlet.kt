@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.math.floor
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import java.time.ZoneOffset
 
 @RequiresApi(Build.VERSION_CODES.N)
 class KingdomGauntlet(val mCtx: Context) {
@@ -67,6 +68,7 @@ class KingdomGauntlet(val mCtx: Context) {
             val endTimeLeft = sleeper?.endTimeLeft()
             if (endTimeLeft != null) {
                 it.endTimeLeftSeconds = if (endTimeLeft >= 0) endTimeLeft else 0
+                it.endTime = sleeper?.endTime!!
             }
 
             it.immunity = if (it.endTimeLeftSeconds > 0) sleeper?.immunity ?: false else false
@@ -134,28 +136,13 @@ class KingdomGauntlet(val mCtx: Context) {
 
         mList.forEach {
             if (it.floors.filterValues { !it.loss }.filterValues { !it.win }.isNotEmpty()) {
-                var sleepHours: Long? = null
-                var sleepMinutes: Long? = null
 
                 if (it.endTimeLeftSeconds > 0) {
-                    sleepHours = it.endTimeLeftSeconds / 3600
-                    sleepMinutes = (it.endTimeLeftSeconds - sleepHours * 3600) / 60
-                }
-
-                if (sleepHours != null && sleepMinutes != null) {
                     if (it.immunity) {
                         text += ":star: "
                     }
                     text += ":zzz: "
-                    if (sleepHours > 0) {
-                        text += "${sleepHours}h"
-                        if (sleepMinutes <= 0) {
-                            text += ", "
-                        }
-                    }
-                    if (sleepMinutes > 0) {
-                        text += "${sleepMinutes}m,  "
-                    }
+                    text += "<t:${it.endTime.toEpochSecond(ZoneOffset.UTC)}:R> "
                 }
 
                 text += "@${it.discordName}   "
