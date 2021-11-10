@@ -33,10 +33,12 @@ class KingdomGauntlet(val mCtx: Context) {
 
         items.forEach {
             var discordName = it.character
+            var timezone: Int = 1000
 
             dbList.forEach { dbItem ->
                 if (dbItem.character == it.character) {
                     discordName = dbItem.discordName
+                    timezone = dbItem.timezone
                 }
             }
 
@@ -45,16 +47,15 @@ class KingdomGauntlet(val mCtx: Context) {
             var highestRatioDiscordName = ""
 
             mSleepers.keys.forEach { sleeperDiscordName ->
-                val ratio = FuzzySearch.ratio(sleeperDiscordName.lowercase(), it.character.lowercase())
-                if (ratio > highestRatio)
-                {
+                val ratio =
+                    FuzzySearch.ratio(sleeperDiscordName.lowercase(), it.character.lowercase())
+                if (ratio > highestRatio) {
                     highestRatio = ratio
                     highestRatioDiscordName = sleeperDiscordName
                 }
             }
 
-            if (highestRatio > 50)
-            {
+            if (highestRatio > 50) {
                 Log.i(TAG, " ${it.character} = $highestRatioDiscordName, ratio = $highestRatio")
                 sleeper = mSleepers[highestRatioDiscordName]
             }
@@ -70,6 +71,7 @@ class KingdomGauntlet(val mCtx: Context) {
 
             it.immunity = if (it.endTimeLeftSeconds > 0) sleeper?.immunity ?: false else false
             it.discordName = discordName
+            it.timezone = timezone
         }
 
         val kgDB = KingdomGauntletDatabaseHelper(mCtx)
@@ -187,7 +189,72 @@ class KingdomGauntlet(val mCtx: Context) {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    private var mLastTimeZoneUpdate = LocalDateTime.now()
+
+    private val mDiscordTimeZones = mutableMapOf<String, Int>()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun handleDiscordData(data: ArrayList<ScreenData>) {
+        val secondsToCollectTimezones: Long = 5
+
+        if (LocalDateTime.now()
+                .isBefore(mLastTimeZoneUpdate.plusSeconds(secondsToCollectTimezones))
+        ) {
+            data.forEach { it ->
+                if (it.name.contains("(") || it.name.contains("[")) {
+                    val match =
+                        Regex("(.*)[\\(|\\[]\\s*([-+]?\\s?[0-9])\\s*[\\)|\\]]").findAll(it.name)
+                    if (match.count() == 0) {
+                        Log.i(TAG, "No match: ${it.name}")
+                    }
+                    match.forEach { m ->
+                        if (m.groups.size == 3) {
+                            val name = m.groups[1]?.value.toString()
+                            val tz = m.groups[2]?.value?.replace(" ", "")?.toInt()
+                            if (tz != null) {
+                                mDiscordTimeZones[name] = tz
+                            }
+                        } else {
+                            Log.i(TAG, "No match: ${it.name}")
+                        }
+                    }
+                }
+            }
+        } else if (data.size >= 3 && data[2].name.contains("Threads")) {
+            Log.i(TAG, "Starting to collect discord user timezones")
+            mLastTimeZoneUpdate = LocalDateTime.now()
+        } else if (mDiscordTimeZones.count() > 0) {
+            Log.i(TAG, "Got ${mDiscordTimeZones.count()} timezones")
+
+            val kmDB = KingdomMemberDatabaseHelper(mCtx)
+            val dbList = kmDB.allData
+
+            mDiscordTimeZones.forEach { (discordName, zone) ->
+                var highestRatio: Int = 0
+                var highestRatioMember: KingdomMember? = null
+
+                dbList.forEach {
+                    val ratio =
+                        FuzzySearch.ratio(discordName.lowercase(), it.character.lowercase())
+                    if (ratio > highestRatio) {
+                        highestRatio = ratio
+                        highestRatioMember = it
+                    }
+                }
+
+                if (highestRatio > 60 && highestRatioMember != null)
+                {
+                    Log.i(TAG, "$discordName == ${highestRatioMember!!.character}, ratio $highestRatio")
+
+                    highestRatioMember!!.timezone = zone
+                    kmDB.updateData(highestRatioMember!!)
+                }
+            }
+
+            kmDB.close()
+
+            mDiscordTimeZones.clear()
+        }
         if (data.size == 1 && data[0].name.contains("Sleepers")) {
             val sd = data[0]
             val split = sd.name.split("\n")
@@ -225,16 +292,14 @@ class KingdomGauntlet(val mCtx: Context) {
                     if (match != null && match.groups.size == expectedMatches) {
                         val immunity = match.groups[1]?.value
                         var hours: Long? = null
-                        if (expectedMatches == 5)
-                        {
+                        if (expectedMatches == 5) {
                             hours = match.groups[2]?.value?.toLong()
                         }
                         val minutes = match.groups[expectedMatches - 2]?.value?.toLong()
                         val name = match.groups[expectedMatches - 1]?.value
                         if (minutes != null && name != null) {
                             var endTime = date!!.plusMinutes(minutes)
-                            if (hours != null)
-                            {
+                            if (hours != null) {
                                 endTime = endTime.plusHours(hours)
                             }
                             val sleeper =
@@ -244,9 +309,11 @@ class KingdomGauntlet(val mCtx: Context) {
                     }
                 }
             }
-        }
 
-        Log.d(TAG, "Sleepers: $mSleepers")
+            if (mSleepers.isNotEmpty()) {
+                Log.d(TAG, "Sleepers: $mSleepers")
+            }
+        }
     }
 
     fun diffFloors(

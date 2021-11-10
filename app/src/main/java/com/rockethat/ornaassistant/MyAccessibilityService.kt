@@ -60,11 +60,11 @@ class MyAccessibilityService() : AccessibilityService() {
             return
         }*/
 
-        if (p0.packageName.toString()
+        /*if (p0.packageName.toString()
                 .contains("discord") && p0.eventType != AccessibilityEvent.TYPE_VIEW_CLICKED
         ) {
             return
-        }
+        }*/
 
         mDebugDepth = 0
 
@@ -106,7 +106,10 @@ class MyAccessibilityService() : AccessibilityService() {
     ): Boolean {
         var done = false
         if (mNodeInfo == null) return done
-        if (depth > 250) return true
+        if (depth > 250)
+        {
+            return true
+        }
 
         //Log.d(TAG, "$text #${mNodeInfo.text}#")
         if (mNodeInfo.text != null) {

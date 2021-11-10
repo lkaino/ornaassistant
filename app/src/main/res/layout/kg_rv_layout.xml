@@ -47,6 +47,22 @@
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/kgLocalTime"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="3"
+            android:text="12:15"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+        <TextView
             android:id="@+id/kgImmunity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
