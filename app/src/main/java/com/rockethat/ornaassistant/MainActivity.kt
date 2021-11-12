@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!isAccessibilityEnabled())
         {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            //startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
         when (tableLayout.selectedTabPosition) {
