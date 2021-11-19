@@ -86,15 +86,15 @@ class MyAccessibilityService() : AccessibilityService() {
         state?.processData(p0.packageName.toString(), values)
 
         lastEvent = System.currentTimeMillis()
-        /*
-        var valueNames = ArrayList<String>()
+
+        /*var valueNames = ArrayList<String>()
         values.forEach {
             valueNames.add("${it.name}")
         }
 
-        Log.v(
+        Log.i(
             TAG,
-            "${p0.eventType} ${System.currentTimeMillis() - start} ms: getChildCalls $getChildCalls, $valueNames"
+            "${p0.eventType} $valueNames"
         )*/
     }
 
