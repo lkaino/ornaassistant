@@ -80,40 +80,6 @@ class OrnaViewDungeonEntry : OrnaView {
             mbEnteringNewDungeon = true
         }
 
-        if (data.any { it.name.lowercase().contains("godforged") }) {
-            Log.d(this.javaClass.toString().split(".").last(), this.toString())
-            updateMap[OrnaViewUpdateType.DUNGEON_GODFORGE] = null
-        }
-
-        if (data.any { it.name.lowercase().contains("complete") }) {
-            if (!mVictoryScreenHandledForFloor && mbEntered) {
-                Log.d(this.javaClass.toString().split(".").last(), this.toString() + " complete!")
-                parseLoot(data, updateMap)
-                mVictoryScreenHandledForFloor = true
-            }
-            Log.d(this.javaClass.toString().split(".").last(), this.toString())
-            updateMap[OrnaViewUpdateType.DUNGEON_DONE] = null
-            mbDone = true
-            bDone = true
-        }
-
-        var defeat = false
-        if (data.any { it.name.lowercase().contains("defeat") }) {
-            Log.d(this.javaClass.toString().split(".").last(), this.toString())
-            updateMap[OrnaViewUpdateType.DUNGEON_FAIL] = null
-            mbDone = true
-            bDone = true
-            defeat = true
-        }
-
-        if (data.any { it.name.lowercase().contains("victory") }) {
-            if (!mVictoryScreenHandledForFloor) {
-                Log.d(this.javaClass.toString().split(".").last(), this.toString() + " victory!")
-                parseLoot(data, updateMap)
-                mVictoryScreenHandledForFloor = true
-            }
-        }
-
         val floor = data.filter { it.name.lowercase().contains("floor") }.firstOrNull()
         if (floor != null) {
             // Floor: 18 / 22
@@ -121,11 +87,12 @@ class OrnaViewDungeonEntry : OrnaView {
                 Regex("Floor:\\s([0-9]+)\\s/\\s([0-9]+|∞)").findAll(floor.name).firstOrNull()
             if (match != null && match.groups.size == 3) {
                 val number = match.groups[1]?.value?.toInt()
+                val defeat = data.any { it.name.lowercase().contains("defeat") }
                 if ((!mbEntered && (number == 1) && !defeat) || (!mbEntered && !mbEnteringNewDungeon)) {
                     mbEntered = true
                     updateMap[OrnaViewUpdateType.DUNGEON_ENTERED] = null
                 }
-                if (number != null && number != mFloorNumber) {
+                if (mbEntered && (number != null && number != mFloorNumber)) {
                     updateMap[OrnaViewUpdateType.DUNGEON_NEW_FLOOR] = number
                     mFloorNumber = number
                     mVictoryScreenHandledForFloor = false
@@ -173,6 +140,43 @@ class OrnaViewDungeonEntry : OrnaView {
             )
 
             updateMap[OrnaViewUpdateType.DUNGEON_MODE_CHANGED] = null
+        }
+
+        if (mbEntered)
+        {
+            if (data.any { it.name.lowercase().contains("godforged") }) {
+                Log.d(this.javaClass.toString().split(".").last(), this.toString())
+                updateMap[OrnaViewUpdateType.DUNGEON_GODFORGE] = null
+            }
+
+            if (data.any { it.name.lowercase().contains("complete") }) {
+                if (!mVictoryScreenHandledForFloor && mbEntered) {
+                    Log.d(this.javaClass.toString().split(".").last(), this.toString() + " complete!")
+                    parseLoot(data, updateMap)
+                    mVictoryScreenHandledForFloor = true
+                }
+                Log.d(this.javaClass.toString().split(".").last(), this.toString())
+                updateMap[OrnaViewUpdateType.DUNGEON_DONE] = null
+                mbDone = true
+                bDone = true
+            }
+
+            var defeat = false
+            if (data.any { it.name.lowercase().contains("defeat") }) {
+                Log.d(this.javaClass.toString().split(".").last(), this.toString())
+                updateMap[OrnaViewUpdateType.DUNGEON_FAIL] = null
+                mbDone = true
+                bDone = true
+                defeat = true
+            }
+
+            if (data.any { it.name.lowercase().contains("victory") }) {
+                if (!mVictoryScreenHandledForFloor) {
+                    Log.d(this.javaClass.toString().split(".").last(), this.toString() + " victory!")
+                    parseLoot(data, updateMap)
+                    mVictoryScreenHandledForFloor = true
+                }
+            }
         }
 
         updateResults(updateMap)
