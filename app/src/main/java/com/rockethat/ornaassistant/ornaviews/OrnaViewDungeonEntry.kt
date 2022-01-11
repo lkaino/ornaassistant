@@ -198,11 +198,7 @@ class OrnaViewDungeonEntry : OrnaView {
                 }
             }
             try {
-                numberValue = item.name
-                    .replace(" ", "")
-                    .replace(",", "")
-                    .replace(".", "")
-                    .toInt()
+                numberValue = item.name.replace(Regex("[^\\d]"), "").toInt()
             } catch (e: NumberFormatException) {
                 numberValue = null
             }
