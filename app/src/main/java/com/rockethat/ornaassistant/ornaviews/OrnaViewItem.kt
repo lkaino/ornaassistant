@@ -134,7 +134,7 @@ class OrnaViewItem : OrnaView {
             "bestial",
             "chimeric",
             "dragonic",
-            "mighty",
+            //"mighty",
             "wild",
             "colorless",
             "customary",
@@ -165,7 +165,7 @@ class OrnaViewItem : OrnaView {
 
     private fun getAttributes(data: List<ScreenData>) {
         var bAdornments = false
-        val acceptedAttributes = listOf("Att", "Mag", "Def", "Res", "Dex", "Crit")
+        val acceptedAttributes = listOf("Att", "Mag", "Def", "Res", "Dex", "Crit", "Mana", "Ward")
 
         for (item in data) {
             if (item.name.contains("ADORNMENTS")) {
@@ -219,6 +219,7 @@ class OrnaViewItem : OrnaView {
                 "Def" -> params["defense"] = attValue
                 "Res" -> params["resistance"] = attValue
                 "Dex" -> params["dexterity"] = attValue
+                "Ward" -> params["ward"] = attValue
                 "Crit" -> {}
                 else -> {
                     Log.d(TAG, "Invalid attribute $attName")
