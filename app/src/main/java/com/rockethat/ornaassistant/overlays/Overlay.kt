@@ -13,6 +13,9 @@ import android.view.MotionEvent
 import android.view.View.OnTouchListener
 import android.os.*
 import android.os.HandlerThread
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 open class Overlay(
@@ -64,7 +67,6 @@ open class Overlay(
                 }
 
                 mView.setOnTouchListener(OnTouchListener { v, event ->
-                    Log.i("OrnaOverlay", "touch $event!")
                     val x = event.x.toInt()
                     val y = event.y.toInt()
                     if (event.action == MotionEvent.ACTION_DOWN) {
@@ -78,16 +80,22 @@ open class Overlay(
                         mPos.moveEvents++
                     }
                     if (event.action == MotionEvent.ACTION_UP) {
-                        if (mPos.moveEvents > 1) {
-                            val eventX = mPos.startX + x - mPos.eventStartX
-                            val eventY = mPos.startY + y - mPos.eventStartY
+                        val eventX = mPos.startX + x - mPos.eventStartX
+                        val eventY = mPos.startY + y - mPos.eventStartY
+                        val distX = abs(mPos.eventStartX - x)
+                        val distY = abs(mPos.eventStartY - y)
+                        val dist = sqrt(distX.toDouble().pow(2.0) + distY.toDouble().pow(2.0))
+                        if (dist > 20.0)
+                        {
                             mPos.x = eventX
                             mPos.y = eventY
                             val params = mParamFloat
                             params.x = mPos.x
                             params.y = mPos.y
                             mWM.updateViewLayout(mView, params)
-                        } else {
+                        }
+                        else
+                        {
                             hide()
                         }
                     }
