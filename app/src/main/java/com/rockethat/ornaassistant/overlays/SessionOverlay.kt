@@ -42,43 +42,20 @@ class SessionOverlay(
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun show() {
-        if (mVisible.compareAndSet(false, true)) {
-            if (mView.parent == null) {
-                val flags =
-                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                val paramFloat = WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    flags,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-                )
-
-                paramFloat.width = (mCtx.resources.displayMetrics.widthPixels * mWidth).toInt()
-
-                paramFloat.gravity = Gravity.TOP or Gravity.LEFT
-                paramFloat.x = 0
-                paramFloat.y = 470
-                Handler(Looper.getMainLooper()).post {
-                    mWM.addView(mView, paramFloat)
-                }
-            }
-        }
+        super.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun update(session: WayvesselSession?, dungeonVisit: DungeonVisit?) {
-        Handler(Looper.getMainLooper()).post {
+        mUIRequestHandler.post {
+
             if (session != null) {
                 mSessionHeaderTv.text = "@${session.name}"
                 if (session.mDungeonsVisited > 1) {
                     mSessionTv.text = "${session.mDungeonsVisited} dungeons"
-                    if (dungeonVisit != null && dungeonVisit.mode.mMode == DungeonMode.Modes.ENDLESS)
-                    {
+                    if (dungeonVisit != null && dungeonVisit.mode.mMode == DungeonMode.Modes.ENDLESS) {
                         mSessionGoldTv.text = createSessionGoldOrnNumberString(session.experience)
-                    }
-                    else
-                    {
+                    } else {
                         mSessionGoldTv.text = createSessionGoldOrnNumberString(session.gold)
                     }
                     mSessionOrnTv.text = createSessionGoldOrnNumberString(session.orns)
@@ -100,13 +77,10 @@ class SessionOverlay(
             }
 
             if (dungeonVisit != null) {
-                if (dungeonVisit.mode.mMode == DungeonMode.Modes.ENDLESS)
-                {
+                if (dungeonVisit.mode.mMode == DungeonMode.Modes.ENDLESS) {
                     mGoldHeaderTv.text = "Exp"
                     mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.experience)
-                }
-                else
-                {
+                } else {
                     mGoldHeaderTv.text = "Gold"
                     mDungeonGoldTv.text = createSessionGoldOrnNumberString(dungeonVisit.gold)
                 }
@@ -131,5 +105,10 @@ class SessionOverlay(
         } else {
             return "$value"
         }
+    }
+
+    init {
+        mPos.x = 0
+        mPos.y = 470
     }
 }

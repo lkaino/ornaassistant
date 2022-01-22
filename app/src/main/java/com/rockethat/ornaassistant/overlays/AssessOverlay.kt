@@ -7,12 +7,9 @@ import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.viewadapters.AssessAdapter
 import com.rockethat.ornaassistant.viewadapters.AssessItem
-import com.rockethat.ornaassistant.viewadapters.KGAdapter
-import com.rockethat.ornaassistant.viewadapters.KGItem
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONTokener
@@ -36,9 +33,6 @@ class AssessOverlay(
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun show() {
         super.show()
-        mRv.setOnClickListener {
-            hide()
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

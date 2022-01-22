@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.rockethat.MultiClickRecyclerView
         android:id="@+id/rvKG"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
