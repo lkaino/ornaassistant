@@ -67,8 +67,8 @@ open class Overlay(
                 }
 
                 mView.setOnTouchListener(OnTouchListener { v, event ->
-                    val x = event.x.toInt()
-                    val y = event.y.toInt()
+                    val x = event.rawX.toInt()
+                    val y = event.rawY.toInt()
                     if (event.action == MotionEvent.ACTION_DOWN) {
                         mPos.startX = mPos.x
                         mPos.startY = mPos.y
@@ -76,27 +76,13 @@ open class Overlay(
                         mPos.eventStartY = y
                         mPos.moveEvents = 0
                     }
-                    if (event.action == MotionEvent.ACTION_MOVE) {
-                        mPos.moveEvents++
-                    }
-                    if (event.action == MotionEvent.ACTION_UP) {
-                        val eventX = mPos.startX + x - mPos.eventStartX
-                        val eventY = mPos.startY + y - mPos.eventStartY
-                        val distX = abs(mPos.eventStartX - x)
-                        val distY = abs(mPos.eventStartY - y)
-                        val dist = sqrt(distX.toDouble().pow(2.0) + distY.toDouble().pow(2.0))
-                        if (dist > 20.0)
-                        {
-                            mPos.x = eventX
-                            mPos.y = eventY
-                            val params = mParamFloat
-                            params.x = mPos.x
-                            params.y = mPos.y
-                            mWM.updateViewLayout(mView, params)
-                        }
-                        else
-                        {
-                            hide()
+                    else {
+                        val dist = move(x, y)
+                        if ((event.action == MotionEvent.ACTION_UP) && (dist < 20.0)){
+                            if (dist < 20.0)
+                            {
+                                hide()
+                            }
                         }
                     }
                     false
@@ -106,6 +92,21 @@ open class Overlay(
 
             Log.i("OrnaOverlay", "SHOW DONE!")
         }
+    }
+
+    fun move(x: Int, y: Int): Double {
+        val eventX = mPos.startX + x - mPos.eventStartX
+        val eventY = mPos.startY + y - mPos.eventStartY
+        val distX = abs(mPos.eventStartX - x)
+        val distY = abs(mPos.eventStartY - y)
+        val dist = sqrt(distX.toDouble().pow(2.0) + distY.toDouble().pow(2.0))
+        mPos.x = eventX
+        mPos.y = eventY
+        val params = mParamFloat
+        params.x = mPos.x
+        params.y = mPos.y
+        mWM.updateViewLayout(mView, params)
+        return dist
     }
 
 
