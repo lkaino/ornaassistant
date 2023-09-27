@@ -68,8 +68,8 @@ class MyAccessibilityService() : AccessibilityService() {
 
         mDebugDepth = 0
 
-        var values = ArrayList<ScreenData>()
-        var mNodeInfo: AccessibilityNodeInfo? = p0.source
+        val values = ArrayList<ScreenData>()
+        val mNodeInfo: AccessibilityNodeInfo? = p0.source
 
         if (p0?.source != null) {
             getChildCalls = 0

@@ -54,8 +54,11 @@ class MainFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        mDb = DungeonVisitDatabaseHelper(context as Context)
-        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(context)
+
+        context?.let {
+            mDb = DungeonVisitDatabaseHelper(it)
+            mSharedPreference = PreferenceManager.getDefaultSharedPreferences(it)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

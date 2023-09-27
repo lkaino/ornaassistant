@@ -6,7 +6,8 @@ import android.view.WindowManager
 import com.rockethat.ornaassistant.*
 import java.util.ArrayList
 
-class OrnaViewDungeonEntry : OrnaView {
+class OrnaViewDungeonEntry(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
+    OrnaView(OrnaViewType.DUNGEON_ENTRY, wm, ctx) {
     var mDungeonName = ""
     var mbEntered = false
     var mbEnteringNewDungeon = true
@@ -15,16 +16,11 @@ class OrnaViewDungeonEntry : OrnaView {
     var mFloorNumber = 1
     var mVictoryScreenHandledForFloor = false
 
-    constructor(
-        data: ArrayList<ScreenData>,
-        wm: WindowManager,
-        ctx: Context
-    ) : super(OrnaViewType.DUNGEON_ENTRY, wm, ctx) {
+    init {
         val name = getName(data)
         if (name != null) {
             mDungeonName = name
         }
-
         Log.d(
             this.javaClass.toString().split(".").last(),
             this.toString()

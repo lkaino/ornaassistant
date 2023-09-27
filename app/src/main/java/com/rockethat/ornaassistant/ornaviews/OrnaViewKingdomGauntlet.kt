@@ -8,21 +8,16 @@ import androidx.annotation.RequiresApi
 import com.rockethat.ornaassistant.*
 import java.util.ArrayList
 
-class OrnaViewKingdomGauntlet : OrnaView {
+class OrnaViewKingdomGauntlet(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
+    OrnaView(OrnaViewType.KINGDOM_GAUNTLET, wm, ctx) {
 
-    constructor(
-        data: ArrayList<ScreenData>,
-        wm: WindowManager,
-        ctx: Context
-    ) : super(OrnaViewType.KINGDOM_GAUNTLET, wm, ctx) {
-
+    init {
         Log.d(
             this.javaClass.toString().split(".").last(),
             this.toString()
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun update(
         data: ArrayList<ScreenData>,
         updateResults: (MutableMap<OrnaViewUpdateType, Any?>) -> Unit

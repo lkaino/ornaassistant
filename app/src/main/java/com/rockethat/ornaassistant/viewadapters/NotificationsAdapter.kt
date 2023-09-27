@@ -1,68 +1,47 @@
 package com.rockethat.ornaassistant.viewadapters
 
-import android.view.View
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-
 import android.view.LayoutInflater
-
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.rockethat.ornaassistant.R
 
 class NotificationsAdapter(
-    private val mItems: List<NotificationsItem>,
-    private val clickListener: () -> Unit
+    private val items: List<NotificationsItem>,
+    private val itemClickListener: () -> Unit
 ) : RecyclerView.Adapter<NotificationsAdapter.ViewHolder>() {
 
-    // Provide a direct reference to each of the views within a data item
-    // Used to cache the views within the item layout for fast access
-    inner class ViewHolder(itemView: View, private val clickListener: () -> Unit) :
-        RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
         }
 
-        // Your holder should contain and initialize a member variable
-        // for any view that will be set as you render a row
-        val inviterText = itemView.findViewById<TextView>(R.id.inviter)
-        val nText = itemView.findViewById<TextView>(R.id.notificationN)
-        val vogText = itemView.findViewById<TextView>(R.id.notificationVoG)
-        val dText = itemView.findViewById<TextView>(R.id.notificationD)
-        val bgText = itemView.findViewById<TextView>(R.id.notificationBG)
-        val uwText = itemView.findViewById<TextView>(R.id.notificationUW)
-        val cgText = itemView.findViewById<TextView>(R.id.notificationCG)
-        val cooldownText = itemView.findViewById<TextView>(R.id.cooldown)
+        val inviterText: TextView = itemView.findViewById(R.id.inviter)
+        val nText: TextView = itemView.findViewById(R.id.notificationN)
+        val vogText: TextView = itemView.findViewById(R.id.notificationVoG)
+        val dText: TextView = itemView.findViewById(R.id.notificationD)
+        val bgText: TextView = itemView.findViewById(R.id.notificationBG)
+        val uwText: TextView = itemView.findViewById(R.id.notificationUW)
+        val cgText: TextView = itemView.findViewById(R.id.notificationCG)
+        val cooldownText: TextView = itemView.findViewById(R.id.cooldown)
 
-        override fun onClick(p0: View?) {
-            clickListener()
+        override fun onClick(view: View?) {
+            itemClickListener()
         }
     }
 
-
-    // ... constructor and member variables
-    // Usually involves inflating a layout from XML and returning the holder
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
-        val context: Context = parent.context
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val context = parent.context
         val inflater = LayoutInflater.from(context)
-
-        // Inflate the custom layout
-        val contactView: View =
-            inflater.inflate(R.layout.notification_rv_layout, parent, false)
-
-        // Return a new holder instance
-        return ViewHolder(contactView, clickListener)
+        val itemView = inflater.inflate(R.layout.notification_rv_layout, parent, false)
+        return ViewHolder(itemView)
     }
 
-    // Involves populating data into the item through holder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // Get the data model based on position
-        val item: NotificationsItem = mItems[position]
+        val item = items[position]
 
         val textViews = listOf(
             holder.inviterText,
@@ -72,12 +51,13 @@ class NotificationsAdapter(
             holder.bgText,
             holder.uwText,
             holder.cgText,
-            holder.cooldownText,
+            holder.cooldownText
         )
 
         var typeface = Typeface.NORMAL
         var color = Color.BLACK
         var alpha = 0
+
         if (position == 0) {
             typeface = Typeface.BOLD
             color = Color.DKGRAY
@@ -88,11 +68,8 @@ class NotificationsAdapter(
             it.setTypeface(null, typeface)
             it.setBackgroundColor(color)
             it.background.alpha = alpha
-            /*it.setOnClickListener {
-                clickListener
-            }*/
         }
-        // Set item views based on your views and data model
+
         holder.inviterText.text = item.inviter
         holder.nText.text = item.N
         holder.dText.text = item.D
@@ -102,15 +79,10 @@ class NotificationsAdapter(
         holder.cgText.text = item.CG
         holder.cooldownText.text = item.cooldown
 
-        if (item.statusBad) {
-            holder.cooldownText.setTextColor(Color.RED)
-        } else {
-            holder.cooldownText.setTextColor(Color.WHITE)
-        }
+        holder.cooldownText.setTextColor(if (item.statusBad) Color.RED else Color.WHITE)
     }
 
-    // Returns the total count of items in the list
     override fun getItemCount(): Int {
-        return mItems.size
+        return items.size
     }
 }

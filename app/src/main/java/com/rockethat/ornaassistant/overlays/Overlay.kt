@@ -58,7 +58,6 @@ open class Overlay(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     open fun show() {
         if (mVisible.compareAndSet(false, true)) {
             if (mView.parent == null) {

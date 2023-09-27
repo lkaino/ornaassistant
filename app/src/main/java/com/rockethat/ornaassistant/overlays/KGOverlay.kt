@@ -31,7 +31,6 @@ class KGOverlay(
         mRv.layoutManager = LinearLayoutManager(mCtx)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun show() {
         super.show()
         mRv.setOnClickListener {

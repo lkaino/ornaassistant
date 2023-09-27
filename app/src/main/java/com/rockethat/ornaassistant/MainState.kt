@@ -17,10 +17,12 @@ import java.util.*
 import com.rockethat.ornaassistant.overlays.KGOverlay
 import com.rockethat.ornaassistant.overlays.SessionOverlay
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.rockethat.ornaassistant.ornaviews.OrnaViewDungeonEntry
 import com.rockethat.ornaassistant.overlays.AssessOverlay
@@ -29,6 +31,7 @@ import java.util.concurrent.LinkedBlockingDeque
 import kotlin.concurrent.thread
 import androidx.work.*
 import java.util.concurrent.TimeUnit
+import android.Manifest
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -79,7 +82,6 @@ class MainState(
     @RequiresApi(Build.VERSION_CODES.O)
     var mKGNextUpdate: LocalDateTime = LocalDateTime.now()
 
-    @RequiresApi(Build.VERSION_CODES.N)
     var mKingdomGauntlet = KingdomGauntlet(mCtx)
 
     var mInBattle = LocalDateTime.now().minusDays(1)
@@ -519,15 +521,26 @@ class MainState(
     ) : Worker(context, workerParams) {
 
         override fun doWork(): Result {
-            val channelID = inputData.getString("channelID")
-            val builder = NotificationCompat.Builder(context, channelID.toString())
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(inputData.getString("title"))
-                .setContentText(inputData.getString("description"))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // Check if the app has the required permissions
+            val hasInternetPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+            val hasVibratePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED
 
-            with(NotificationManagerCompat.from(context)) {
-                notify(101, builder.build())
+            if (hasInternetPermission && hasVibratePermission) {
+                val channelID = inputData.getString("channelID")
+                val builder = NotificationCompat.Builder(context, channelID.toString())
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle(inputData.getString("title"))
+                    .setContentText(inputData.getString("description"))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+                with(NotificationManagerCompat.from(context)) {
+                    notify(101, builder.build())
+                }
+            } else {
+                // Handle the case where one or both permissions are not granted
+                // You can request the missing permissions or show a message to the user
+                // For example:
+                // requestMissingPermissions()
             }
 
             return Result.success()

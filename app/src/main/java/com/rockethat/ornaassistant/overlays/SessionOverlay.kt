@@ -40,7 +40,6 @@ class SessionOverlay(
     var mDungeonOrnTv = mView.findViewById<TextView>(R.id.tvOrnsDungeon)
 
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     override fun show() {
         super.show()
     }

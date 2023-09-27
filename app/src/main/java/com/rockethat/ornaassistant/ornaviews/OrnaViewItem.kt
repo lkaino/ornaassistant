@@ -17,21 +17,15 @@ import com.rockethat.ornaassistant.*
 import org.json.JSONObject
 import org.json.JSONTokener
 import java.util.ArrayList
+import java.util.Locale
 
-class OrnaViewItem : OrnaView {
+class OrnaViewItem(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
+    OrnaView(OrnaViewType.ITEM, wm, ctx) {
     val TAG = "OrnaViewItem"
     var itemName: String? = null
     var nameLocation: Rect? = null
     var attributes: MutableMap<String, Int> = mutableMapOf()
     var level: Int = 1
-
-    constructor(
-        data: ArrayList<ScreenData>,
-        wm: WindowManager,
-        ctx: Context
-    ) : super(OrnaViewType.ITEM, wm, ctx) {
-
-    }
 
     override fun update(
         data: ArrayList<ScreenData>,
@@ -160,8 +154,12 @@ class OrnaViewItem : OrnaView {
         }
 
         for (prefix in prefixes) {
-            if (name?.startsWith(prefix.capitalize()) == true) {
-                name = name.replace(prefix.capitalize() + " ", "")
+            if (name?.startsWith(prefix.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }) == true) {
+                name = name.replace(prefix.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.ROOT
+                    ) else it.toString()
+                } + " ", "")
             }
         }
 
@@ -298,7 +296,7 @@ class OrnaViewItem : OrnaView {
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
         }
 
-        var textView = TextView(ctx)
+        val textView = TextView(ctx)
         textView.text = text
         textView.setTextColor(Color.WHITE)
 

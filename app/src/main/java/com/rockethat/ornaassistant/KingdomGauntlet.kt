@@ -16,7 +16,6 @@ import kotlin.math.floor
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.time.ZoneOffset
 
-@RequiresApi(Build.VERSION_CODES.N)
 class KingdomGauntlet(val mCtx: Context) {
     private val TAG = "OrnaKingdomGauntlet"
     var mSleepers = mutableMapOf<String, Sleeper>()
