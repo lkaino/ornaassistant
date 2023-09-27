@@ -13,16 +13,3 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs 'libs'
-        }
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
