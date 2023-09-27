@@ -1,28 +1,22 @@
 package com.rockethat.ornaassistant.overlays
 
 import android.content.Context
-import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
 import com.rockethat.ornaassistant.db.WayvesselSessionDatabaseHelper
-import com.rockethat.ornaassistant.viewadapters.KGAdapter
-import com.rockethat.ornaassistant.viewadapters.KGItem
 import com.rockethat.ornaassistant.viewadapters.NotificationsAdapter
 import com.rockethat.ornaassistant.viewadapters.NotificationsItem
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.TemporalField
 import java.time.temporal.WeekFields
-import java.time.temporal.WeekFields.ISO
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 

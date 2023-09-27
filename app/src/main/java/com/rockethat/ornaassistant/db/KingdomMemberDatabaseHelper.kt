@@ -5,13 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.rockethat.ornaassistant.KingdomGauntletFloor
 import com.rockethat.ornaassistant.KingdomMember
-import com.rockethat.ornaassistant.WayvesselSession
-import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
-import com.rockethat.ornaassistant.db.WayvesselSessionDatabaseHelper
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class KingdomMemberDatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, VERSION) {
@@ -27,8 +21,7 @@ class KingdomMemberDatabaseHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion == 1 && newVersion == 2)
-        {
+        if (oldVersion == 1 && newVersion == 2) {
             db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COL_3 INTEGER DEFAULT 1000");
         }
     }
@@ -66,17 +59,19 @@ class KingdomMemberDatabaseHelper(context: Context) :
         val db = this.writableDatabase
 
         val existing = getEntry(entry.character)
-        if (existing != null && existing.discordName == entry.discordName && existing.timezone == entry.timezone)
-        {
+        if (existing != null && existing.discordName == entry.discordName && existing.timezone == entry.timezone) {
             return false
-        }
-        else
-        {
+        } else {
             val contentValues = ContentValues()
             contentValues.put(COL_1, entry.character.replace("'", "''"))
             contentValues.put(COL_2, entry.discordName.replace("'", "''"))
             contentValues.put(COL_3, entry.timezone)
-            db.update(TABLE_NAME, contentValues, "ign = ?", arrayOf(entry.character.replace("'", "''")))
+            db.update(
+                TABLE_NAME,
+                contentValues,
+                "ign = ?",
+                arrayOf(entry.character.replace("'", "''"))
+            )
         }
 
         return true

@@ -25,6 +25,7 @@ data class KingdomGauntletFloor(
 data class KingdomMember(val character: String, var floors: MutableMap<Int, KingdomGauntletFloor>) {
     var immunity: Boolean = false
     var endTimeLeftSeconds: Long = 0
+
     @RequiresApi(Build.VERSION_CODES.O)
     var endTime: LocalDateTime = LocalDateTime.now()
     var discordName = ""

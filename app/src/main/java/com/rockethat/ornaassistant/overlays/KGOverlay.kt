@@ -8,7 +8,6 @@ import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rockethat.ornaassistant.KingdomGauntletFloor
 import com.rockethat.ornaassistant.KingdomMember
 import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.viewadapters.KGAdapter
@@ -53,7 +52,7 @@ class KGOverlay(
                 "Seen"
             )
         )
-        val nowUTC = OffsetDateTime.now( ZoneOffset.UTC )
+        val nowUTC = OffsetDateTime.now(ZoneOffset.UTC)
         data.forEach { it ->
             var sleeptime = ""
             if (it.endTimeLeftSeconds > 0) {
@@ -63,8 +62,7 @@ class KGOverlay(
             }
 
             var localTime = ""
-            if (it.timezone < 1000)
-            {
+            if (it.timezone < 1000) {
                 val time = nowUTC.plusHours(it.timezone.toLong())
                 localTime = "${time.hour}.${time.minute.toString().padStart(2, '0')}"
             }

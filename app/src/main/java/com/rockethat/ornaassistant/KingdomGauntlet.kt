@@ -1,19 +1,15 @@
 package com.rockethat.ornaassistant
 
 import KingdomMemberDatabaseHelper
-import android.util.Log
-
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.rockethat.ornaassistant.db.KingdomGauntletDatabaseHelper
-import java.time.LocalDateTime
-import java.util.ArrayList
-import java.util.concurrent.ConcurrentLinkedDeque
-import kotlin.math.floor
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class KingdomGauntlet(val mCtx: Context) {
@@ -186,8 +182,7 @@ class KingdomGauntlet(val mCtx: Context) {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun handleDiscordTimezones(data: ArrayList<ScreenData>)
-    {
+    fun handleDiscordTimezones(data: ArrayList<ScreenData>) {
         val secondsToCollectTimezones: Long = 5
 
         if (LocalDateTime.now()
@@ -237,12 +232,13 @@ class KingdomGauntlet(val mCtx: Context) {
                     }
                 }
 
-                if (highestRatioDiscordName.isNotBlank())
-                {
-                    Log.i(TAG, "${dbItem.character} == ${highestRatioDiscordName}, ratio $highestRatio")
+                if (highestRatioDiscordName.isNotBlank()) {
+                    Log.i(
+                        TAG,
+                        "${dbItem.character} == ${highestRatioDiscordName}, ratio $highestRatio"
+                    )
 
-                    if (highestRatio > 50)
-                    {
+                    if (highestRatio > 50) {
                         dbItem.timezone = highestRatioDiscordTZ
                         kmDB.updateData(dbItem)
                     }
@@ -257,8 +253,7 @@ class KingdomGauntlet(val mCtx: Context) {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun handleDiscordSleepers(data: ArrayList<ScreenData>)
-    {
+    fun handleDiscordSleepers(data: ArrayList<ScreenData>) {
         if (data.size == 1 && data[0].name.contains("Sleepers")) {
             val sd = data[0]
             val split = sd.name.split("\n")

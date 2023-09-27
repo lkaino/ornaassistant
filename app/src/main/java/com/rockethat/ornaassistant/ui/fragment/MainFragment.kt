@@ -1,6 +1,5 @@
 package com.rockethat.ornaassistant.ui.fragment
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -8,27 +7,22 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.rockethat.ornaassistant.R
 import android.widget.Button
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.rockethat.ornaassistant.DungeonVisit
+import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
 import java.time.LocalDate
-
-import android.content.res.Resources.Theme
-
-import android.util.TypedValue
-import androidx.preference.PreferenceManager
-import com.google.android.material.color.MaterialColors
-import com.rockethat.ornaassistant.DungeonVisit
 
 
 // TODO: Rename parameter arguments, choose names that match

@@ -2,18 +2,17 @@ package com.rockethat.ornaassistant
 
 class DungeonMode {
 
-    constructor()
-    {
+    constructor() {
     }
 
-    constructor(mode : Modes)
-    {
+    constructor(mode: Modes) {
         mMode = mode
     }
 
     enum class Modes {
         NORMAL, BOSS, ENDLESS
     }
+
     var mMode: Modes = Modes.NORMAL
     var mbHard: Boolean = false
 

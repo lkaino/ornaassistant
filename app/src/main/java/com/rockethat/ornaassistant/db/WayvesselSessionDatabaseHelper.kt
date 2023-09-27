@@ -55,7 +55,8 @@ class WayvesselSessionDatabaseHelper(context: Context) :
     fun insertData(entry: WayvesselSession): Long {
         val db = this.writableDatabase
         val contentValues = ContentValues()
-        val started = entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000
+        val started =
+            entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000
         contentValues.put(COL_2, started)
         contentValues.put(COL_3, entry.mDurationSeconds)
         contentValues.put(COL_4, entry.name)
@@ -64,15 +65,18 @@ class WayvesselSessionDatabaseHelper(context: Context) :
         contentValues.put(COL_7, entry.experience)
 
         db.insert(TABLE_NAME, null, contentValues)
-        val entries = toEntries(db.rawQuery(
-            "SELECT * FROM $TABLE_NAME " +
-                    "WHERE started = $started " +
-                    "AND duration = ${entry.mDurationSeconds} " +
-                    "AND name = '${entry.name}' " +
-                    "AND orns = ${entry.orns} " +
-                    "AND gold = ${entry.gold} " +
-                    "AND experience = ${entry.experience} ",
-            null))
+        val entries = toEntries(
+            db.rawQuery(
+                "SELECT * FROM $TABLE_NAME " +
+                        "WHERE started = $started " +
+                        "AND duration = ${entry.mDurationSeconds} " +
+                        "AND name = '${entry.name}' " +
+                        "AND orns = ${entry.orns} " +
+                        "AND gold = ${entry.gold} " +
+                        "AND experience = ${entry.experience} ",
+                null
+            )
+        )
 
         return if (entries.size == 1) {
             entries.first().mID
@@ -90,7 +94,10 @@ class WayvesselSessionDatabaseHelper(context: Context) :
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_1, id)
-        contentValues.put(COL_2, entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
+        contentValues.put(
+            COL_2,
+            entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000
+        )
         contentValues.put(COL_3, entry.mDurationSeconds)
         contentValues.put(COL_4, entry.name)
         contentValues.put(COL_5, entry.orns)
@@ -138,7 +145,8 @@ class WayvesselSessionDatabaseHelper(context: Context) :
             val experience = cur.getLong(col++)
 
             val session = WayvesselSession(name, id)
-            session.mStarted = LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
+            session.mStarted =
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
             session.mDurationSeconds = duration
             session.orns = orns
             session.gold = gold
@@ -171,12 +179,12 @@ class WayvesselSessionDatabaseHelper(context: Context) :
     fun getLastNSessionsFor(name: String, n: Int): ArrayList<WayvesselSession> {
         val db = this.writableDatabase
         return toEntries(
-                db.rawQuery(
-                        "SELECT * FROM $TABLE_NAME " +
-                                "WHERE name='${name.replace("'", "''")}' " +
-                                "ORDER BY ID DESC LIMIT $n ",
-                        null
-                )
+            db.rawQuery(
+                "SELECT * FROM $TABLE_NAME " +
+                        "WHERE name='${name.replace("'", "''")}' " +
+                        "ORDER BY ID DESC LIMIT $n ",
+                null
+            )
         )
     }
 

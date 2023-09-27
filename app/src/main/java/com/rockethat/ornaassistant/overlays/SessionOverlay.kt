@@ -1,27 +1,12 @@
 package com.rockethat.ornaassistant.overlays
 
 import android.content.Context
-import android.graphics.PixelFormat
-import android.graphics.Rect
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.rockethat.ornaassistant.*
-import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
-import com.rockethat.ornaassistant.db.WayvesselSessionDatabaseHelper
-import com.rockethat.ornaassistant.viewadapters.KGAdapter
-import com.rockethat.ornaassistant.viewadapters.KGItem
-import com.rockethat.ornaassistant.viewadapters.NotificationsAdapter
-import com.rockethat.ornaassistant.viewadapters.NotificationsItem
-import java.time.Duration
-import java.time.LocalDateTime
 
 class SessionOverlay(
     mWM: WindowManager,

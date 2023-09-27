@@ -1,28 +1,24 @@
 package com.rockethat.ornaassistant
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.viewpager2.widget.ViewPager2
-import com.rockethat.ornaassistant.ui.fragment.FragmentAdapter
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-
 import android.content.Intent
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
-import androidx.annotation.RequiresApi
-import androidx.preference.PreferenceManager
-import com.rockethat.ornaassistant.ui.fragment.KingdomFragment
-
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.rockethat.ornaassistant.ui.fragment.FragmentAdapter
+import com.rockethat.ornaassistant.ui.fragment.KingdomFragment
 import com.rockethat.ornaassistant.ui.fragment.MainFragment
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
@@ -31,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pager: ViewPager2
     private lateinit var adapter: FragmentAdapter
     private val TAG = "OrnaMainActivity"
-    private val ACCESSIBILITY_SERVICE_NAME = "laukas service"
+    private val ACCESSIBILITY_SERVICE_NAME = "Orna Assistant"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+
                     "Kingdom" -> {
                         pager.currentItem = 1
                         if (adapter.frags.size >= 2) {
@@ -110,9 +107,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (!isAccessibilityEnabled())
-        {
-            //startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        if (!isAccessibilityEnabled()) {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
         when (tableLayout.selectedTabPosition) {
@@ -124,6 +120,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             1 -> {
                 if (adapter.frags.size >= 2) {
                     with(adapter.frags[1] as KingdomFragment)
@@ -135,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun isAccessibilityEnabled(): Boolean {
+    private fun isAccessibilityEnabled(): Boolean {
         var accessibilityEnabled = 0
         val accessibilityFound = false
         try {
@@ -155,9 +152,9 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "Setting: $settingValue")
             mStringColonSplitter.setString(settingValue)
             while (mStringColonSplitter.hasNext()) {
-                val accessabilityService = mStringColonSplitter.next()
-                Log.d(TAG, "Setting: $accessabilityService")
-                if (accessabilityService.contains(
+                val accessibilityService = mStringColonSplitter.next()
+                Log.d(TAG, "Setting: $accessibilityService")
+                if (accessibilityService.contains(
                         packageName,
                         ignoreCase = true
                     )

@@ -1,37 +1,37 @@
 package com.rockethat.ornaassistant
 
+import android.Manifest
 import android.accessibilityservice.AccessibilityService
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Rect
+import android.media.AudioAttributes
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
-import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
-import com.rockethat.ornaassistant.overlays.InviterOverlay
-import java.time.LocalDateTime
-import java.util.*
-import com.rockethat.ornaassistant.overlays.KGOverlay
-import com.rockethat.ornaassistant.overlays.SessionOverlay
-import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.media.AudioAttributes
-import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import androidx.work.*
+import com.rockethat.ornaassistant.db.DungeonVisitDatabaseHelper
 import com.rockethat.ornaassistant.ornaviews.OrnaViewDungeonEntry
 import com.rockethat.ornaassistant.overlays.AssessOverlay
+import com.rockethat.ornaassistant.overlays.InviterOverlay
+import com.rockethat.ornaassistant.overlays.KGOverlay
+import com.rockethat.ornaassistant.overlays.SessionOverlay
 import org.json.JSONObject
+import java.time.LocalDateTime
+import java.util.*
 import java.util.concurrent.LinkedBlockingDeque
-import kotlin.concurrent.thread
-import androidx.work.*
 import java.util.concurrent.TimeUnit
-import android.Manifest
+import kotlin.concurrent.thread
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -125,8 +125,7 @@ class MainState(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleOrnaData(data: ArrayList<ScreenData>) {
-        if (Battle.inBattle(data))
-        {
+        if (Battle.inBattle(data)) {
             mInBattle = LocalDateTime.now()
             if (mKGOverlay.isVisible()) mKGOverlay.hide()
         }
@@ -144,8 +143,7 @@ class MainState(
                             mSessionOverlay.hide()
                         }
                         mSession = WayvesselSession(name, mCtx)
-                        if (mSharedPreference.getBoolean("nWayvessel", true))
-                        {
+                        if (mSharedPreference.getBoolean("nWayvessel", true)) {
                             scheduleWayvesselNotification(60)
                         }
                         if (mDungeonVisit != null) {
@@ -244,14 +242,11 @@ class MainState(
                 OrnaViewUpdateType.DUNGEON_ENTERED -> {
                     if (mDungeonVisit == null) {
                         val view: OrnaViewDungeonEntry = mCurrentView as OrnaViewDungeonEntry
-                        if (mOnholdVisits.containsKey(view.mDungeonName))
-                        {
+                        if (mOnholdVisits.containsKey(view.mDungeonName)) {
                             Log.i(TAG, "Reloading on hold visit to ${view.mDungeonName}.")
                             mDungeonVisit = mOnholdVisits[view.mDungeonName]
                             mOnholdVisits.remove(view.mDungeonName)
-                        }
-                        else
-                        {
+                        } else {
                             var sessionID: Long? = null
                             if (mSession != null) {
                                 sessionID = mSession!!.mID
@@ -266,6 +261,7 @@ class MainState(
                         mSessionOverlay.update(mSession, mDungeonVisit)
                     }
                 }
+
                 OrnaViewUpdateType.DUNGEON_NEW_DUNGEON -> {
                     if (mDungeonVisit != null) {
                         Log.i(TAG, "Putting on hold visit to ${mDungeonVisit!!.name}.")
@@ -273,12 +269,14 @@ class MainState(
                         mDungeonVisit = null
                     }
                 }
+
                 OrnaViewUpdateType.DUNGEON_MODE_CHANGED -> {
                     if (mDungeonVisit != null) {
                         val view: OrnaViewDungeonEntry = mCurrentView as OrnaViewDungeonEntry
                         mDungeonVisit!!.mode = view.mMode
                     }
                 }
+
                 OrnaViewUpdateType.DUNGEON_GODFORGE -> if (mDungeonVisit != null) mDungeonVisit!!.godforges++
                 OrnaViewUpdateType.DUNGEON_DONE -> if (mDungeonVisit != null) {
                     if (mSession == null) {
@@ -286,6 +284,7 @@ class MainState(
                     }
                     dungeonDone = true
                 }
+
                 OrnaViewUpdateType.DUNGEON_FAIL -> if (mDungeonVisit != null) {
                     if (mSession == null) {
                         mSessionOverlay.hide()
@@ -293,8 +292,10 @@ class MainState(
                     dungeonDone = true
                     dungeonFailed = true
                 }
+
                 OrnaViewUpdateType.DUNGEON_NEW_FLOOR -> if (mDungeonVisit != null) mDungeonVisit!!.floor =
                     (data as Int).toLong()
+
                 OrnaViewUpdateType.DUNGEON_EXPERIENCE -> {
                     if (mDungeonVisit != null) mDungeonVisit!!.experience += data as Int
                     if (mSession != null) mSession!!.experience += data as Int
@@ -302,6 +303,7 @@ class MainState(
                         mSessionOverlay.update(mSession, mDungeonVisit)
                     }
                 }
+
                 OrnaViewUpdateType.DUNGEON_ORNS -> {
                     if (mDungeonVisit != null) mDungeonVisit!!.orns += data as Int
                     if (mSession != null) mSession!!.orns += data as Int
@@ -309,6 +311,7 @@ class MainState(
                         mSessionOverlay.update(mSession, mDungeonVisit)
                     }
                 }
+
                 OrnaViewUpdateType.DUNGEON_GOLD -> {
                     if (mDungeonVisit != null) mDungeonVisit!!.gold += data as Int
                     if (mSession != null) mSession!!.gold += data as Int
@@ -316,14 +319,17 @@ class MainState(
                         mSessionOverlay.update(mSession, mDungeonVisit)
                     }
                 }
+
                 OrnaViewUpdateType.NOTIFICATIONS_INVITERS -> {
                     if (mSharedPreference.getBoolean("invites", true)) {
                         mInviterOverlay.update(data as MutableMap<String, Rect>)
                     }
                 }
+
                 OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST -> {
                     updateKG(data as List<KingdomMember>)
                 }
+
                 OrnaViewUpdateType.ITEM_ASSESS_RESULTS -> {
                     mAssessOverlay.update(data as JSONObject)
                 }
@@ -349,8 +355,7 @@ class MainState(
         new.updateItems(items)
         mKingdomGauntlet.diffFloors(new, uniqueThis, uniqueOther)
 
-        if (dtNow.isBefore(mInBattle.plusSeconds(2)))
-        {
+        if (dtNow.isBefore(mInBattle.plusSeconds(2))) {
             // Player has been recently in battle, do nothing
             return
         }
@@ -379,7 +384,11 @@ class MainState(
                 Log.i(TAG, "One floor was removed!")
                 // One floor was removed
                 var lastFloor = 0
-                items.forEach { it.floors.forEach{f -> if (lastFloor < f.key) lastFloor = f.key} }
+                items.forEach {
+                    it.floors.forEach { f ->
+                        if (lastFloor < f.key) lastFloor = f.key
+                    }
+                }
 
                 val otherMember = uniqueOther.firstOrNull { it.floors.containsKey(lastFloor) }
                 if (otherMember != null) {
@@ -396,8 +405,7 @@ class MainState(
                             otherMember
 
                         )
-                        if (mSharedPreference.getBoolean("nKGShuffle", true))
-                        {
+                        if (mSharedPreference.getBoolean("nKGShuffle", true)) {
                             scheduleShuffleNotification(20)
                         }
                     }
@@ -472,12 +480,12 @@ class MainState(
         }
     }
 
-    private fun getRandomShuffleChannel() : String {
+    private fun getRandomShuffleChannel(): String {
 
         return mShuffleNotificationChannelNames[(mShuffleNotificationChannelNames.indices).random()]
     }
 
-    private fun getRandomShuffleSound() : String {
+    private fun getRandomShuffleSound(): String {
 
         return "android.resource://" + mCtx.packageName + "/" + mShuffleRes[(mShuffleRes.indices).random()]
     }
@@ -522,8 +530,14 @@ class MainState(
 
         override fun doWork(): Result {
             // Check if the app has the required permissions
-            val hasInternetPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
-            val hasVibratePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED
+            val hasInternetPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.INTERNET
+            ) == PackageManager.PERMISSION_GRANTED
+            val hasVibratePermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.VIBRATE
+            ) == PackageManager.PERMISSION_GRANTED
 
             if (hasInternetPermission && hasVibratePermission) {
                 val channelID = inputData.getString("channelID")

@@ -5,7 +5,6 @@ import android.view.WindowManager
 import com.rockethat.ornaassistant.OrnaView
 import com.rockethat.ornaassistant.OrnaViewType
 import com.rockethat.ornaassistant.ScreenData
-import java.util.ArrayList
 
 class OrnaViewInventory(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
     OrnaView(OrnaViewType.INVENTORY, wm, ctx) {

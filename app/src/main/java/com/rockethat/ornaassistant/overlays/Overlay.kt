@@ -1,18 +1,16 @@
 package com.rockethat.ornaassistant.overlays
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PixelFormat
-import android.view.Gravity
-import android.view.View
-import android.view.WindowManager
-import androidx.annotation.RequiresApi
-import android.util.Log
-import java.util.concurrent.atomic.AtomicBoolean
-import android.annotation.SuppressLint
-import android.view.MotionEvent
-import android.view.View.OnTouchListener
 import android.os.*
-import android.os.HandlerThread
+import android.util.Log
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
+import android.view.WindowManager
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -74,12 +72,10 @@ open class Overlay(
                         mPos.eventStartX = x
                         mPos.eventStartY = y
                         mPos.moveEvents = 0
-                    }
-                    else {
+                    } else {
                         val dist = move(x, y)
-                        if ((event.action == MotionEvent.ACTION_UP) && (dist < 20.0)){
-                            if (dist < 20.0)
-                            {
+                        if ((event.action == MotionEvent.ACTION_UP) && (dist < 20.0)) {
+                            if (dist < 20.0) {
                                 hide()
                             }
                         }

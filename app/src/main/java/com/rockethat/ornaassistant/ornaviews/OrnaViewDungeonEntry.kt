@@ -3,8 +3,11 @@ package com.rockethat.ornaassistant.ornaviews
 import android.content.Context
 import android.util.Log
 import android.view.WindowManager
-import com.rockethat.ornaassistant.*
-import java.util.ArrayList
+import com.rockethat.ornaassistant.DungeonMode
+import com.rockethat.ornaassistant.OrnaView
+import com.rockethat.ornaassistant.OrnaViewType
+import com.rockethat.ornaassistant.OrnaViewUpdateType
+import com.rockethat.ornaassistant.ScreenData
 
 class OrnaViewDungeonEntry(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
     OrnaView(OrnaViewType.DUNGEON_ENTRY, wm, ctx) {
@@ -138,8 +141,7 @@ class OrnaViewDungeonEntry(data: ArrayList<ScreenData>, wm: WindowManager, ctx: 
             updateMap[OrnaViewUpdateType.DUNGEON_MODE_CHANGED] = null
         }
 
-        if (mbEntered)
-        {
+        if (mbEntered) {
             if (data.any { it.name.lowercase().contains("godforged") }) {
                 Log.d(this.javaClass.toString().split(".").last(), this.toString())
                 updateMap[OrnaViewUpdateType.DUNGEON_GODFORGE] = null
@@ -147,7 +149,10 @@ class OrnaViewDungeonEntry(data: ArrayList<ScreenData>, wm: WindowManager, ctx: 
 
             if (data.any { it.name.lowercase().contains("complete") }) {
                 if (!mVictoryScreenHandledForFloor && mbEntered) {
-                    Log.d(this.javaClass.toString().split(".").last(), this.toString() + " complete!")
+                    Log.d(
+                        this.javaClass.toString().split(".").last(),
+                        this.toString() + " complete!"
+                    )
                     parseLoot(data, updateMap)
                     mVictoryScreenHandledForFloor = true
                 }
@@ -168,7 +173,10 @@ class OrnaViewDungeonEntry(data: ArrayList<ScreenData>, wm: WindowManager, ctx: 
 
             if (data.any { it.name.lowercase().contains("victory") }) {
                 if (!mVictoryScreenHandledForFloor) {
-                    Log.d(this.javaClass.toString().split(".").last(), this.toString() + " victory!")
+                    Log.d(
+                        this.javaClass.toString().split(".").last(),
+                        this.toString() + " victory!"
+                    )
                     parseLoot(data, updateMap)
                     mVictoryScreenHandledForFloor = true
                 }
@@ -187,8 +195,10 @@ class OrnaViewDungeonEntry(data: ArrayList<ScreenData>, wm: WindowManager, ctx: 
                 when (item.name) {
                     " experience" -> updateMap[OrnaViewUpdateType.DUNGEON_EXPERIENCE] =
                         numberValue
+
                     " party experience" -> updateMap[OrnaViewUpdateType.DUNGEON_EXPERIENCE] =
                         numberValue
+
                     " gold" -> updateMap[OrnaViewUpdateType.DUNGEON_GOLD] = numberValue
                     " orns" -> updateMap[OrnaViewUpdateType.DUNGEON_ORNS] = numberValue
                 }

@@ -1,12 +1,14 @@
 package com.rockethat.ornaassistant.ornaviews
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
-import com.rockethat.ornaassistant.*
-import java.util.ArrayList
+import com.rockethat.ornaassistant.KingdomGauntletFloor
+import com.rockethat.ornaassistant.KingdomMember
+import com.rockethat.ornaassistant.OrnaView
+import com.rockethat.ornaassistant.OrnaViewType
+import com.rockethat.ornaassistant.OrnaViewUpdateType
+import com.rockethat.ornaassistant.ScreenData
 
 class OrnaViewKingdomGauntlet(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
     OrnaView(OrnaViewType.KINGDOM_GAUNTLET, wm, ctx) {
@@ -37,8 +39,7 @@ class OrnaViewKingdomGauntlet(data: ArrayList<ScreenData>, wm: WindowManager, ct
 
         var highestDepth = 0
 
-        if (data.any{it.name.equals("Allies")})
-        {
+        if (data.any { it.name.equals("Allies") }) {
             // workaround for allies view
             return true
         }

@@ -46,10 +46,13 @@ class KingdomGauntletDatabaseHelper(context: Context) :
      * It Will insert data to SQLIte database.
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun insertData(dt: LocalDateTime, name: String ) {
+    fun insertData(dt: LocalDateTime, name: String) {
         val db = this.writableDatabase
         val contentValues = ContentValues()
-        contentValues.put(COL_1, dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
+        contentValues.put(
+            COL_1,
+            dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000
+        )
         contentValues.put(COL_2, name)
         db.insert(TABLE_NAME, null, contentValues)
     }
@@ -86,7 +89,8 @@ class KingdomGauntletDatabaseHelper(context: Context) :
             val started = cur.getLong(col++)
             val name = cur.getString(col++)
 
-            val startedDt = LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
+            val startedDt =
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
 
             list.add(KingdomMemberDatabaseItem(startedDt, name))
         }
@@ -108,7 +112,11 @@ class KingdomGauntletDatabaseHelper(context: Context) :
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getEntriesBetween(start: LocalDateTime, end: LocalDateTime, name: String): List<KingdomMemberDatabaseItem> {
+    fun getEntriesBetween(
+        start: LocalDateTime,
+        end: LocalDateTime,
+        name: String
+    ): List<KingdomMemberDatabaseItem> {
         val startUnix = start.toEpochSecond(ZoneOffset.UTC)
         val endUnix = end.toEpochSecond(ZoneOffset.UTC)
         val db = this.writableDatabase
@@ -124,7 +132,10 @@ class KingdomGauntletDatabaseHelper(context: Context) :
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getEntriesBetween(start: LocalDateTime, end: LocalDateTime): List<KingdomMemberDatabaseItem> {
+    fun getEntriesBetween(
+        start: LocalDateTime,
+        end: LocalDateTime
+    ): List<KingdomMemberDatabaseItem> {
         val startUnix = start.toEpochSecond(ZoneOffset.UTC)
         val endUnix = end.toEpochSecond(ZoneOffset.UTC)
         val db = this.writableDatabase

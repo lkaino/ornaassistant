@@ -19,8 +19,7 @@ class WayvesselSession(val name: String, val mCtx: Context?) {
     var mDungeonsVisited = 0
 
     init {
-        if (mCtx != null)
-        {
+        if (mCtx != null) {
             val db = WayvesselSessionDatabaseHelper(mCtx)
             mID = db.insertData(this)
             db.close()
@@ -33,8 +32,7 @@ class WayvesselSession(val name: String, val mCtx: Context?) {
 
     fun finish() {
         mDurationSeconds = ChronoUnit.SECONDS.between(mStarted, LocalDateTime.now())
-        if (mCtx != null)
-        {
+        if (mCtx != null) {
             val db = WayvesselSessionDatabaseHelper(mCtx)
             db.updateData(mID.toString(), this)
         }

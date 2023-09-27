@@ -1,16 +1,13 @@
 package com.rockethat.ornaassistant.viewadapters
 
-import android.view.View
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.util.Log
-
 import android.view.LayoutInflater
-
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.rockethat.ornaassistant.R
 
 class AssessAdapter(
@@ -26,6 +23,7 @@ class AssessAdapter(
         RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         val cols = mutableListOf<TextView>()
+
         init {
             itemView.setOnClickListener(this)
             cols.clear()
@@ -106,14 +104,14 @@ class AssessAdapter(
         // Set item views based on your views and data model
         var i = 0
         for (col in item.cols) {
-            if (i <  holder.cols.size) {
+            if (i < holder.cols.size) {
                 holder.cols[i].text = col
                 holder.cols[i].visibility = View.VISIBLE
             }
             i++
         }
 
-        while (i <  holder.cols.size) {
+        while (i < holder.cols.size) {
             holder.cols[i].visibility = View.GONE
             i++
         }

@@ -44,8 +44,7 @@ class DungeonVisit(var sessionID: Long?, val name: String, var mode: DungeonMode
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun coolDownEnds(): LocalDateTime
-    {
+    fun coolDownEnds(): LocalDateTime {
         return mStarted.plusHours(coolDownHours())
     }
 }

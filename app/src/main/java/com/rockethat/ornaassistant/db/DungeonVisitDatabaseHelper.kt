@@ -50,8 +50,7 @@ class DungeonVisitDatabaseHelper(context: Context) :
      * to upgrade to the new schema version.
      */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion == 2 && newVersion == 3)
-        {
+        if (oldVersion == 2 && newVersion == 3) {
             db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN $COL_13 INTEGER DEFAULT 0");
         }
     }
@@ -64,7 +63,10 @@ class DungeonVisitDatabaseHelper(context: Context) :
     fun insertData(entry: DungeonVisit) {
         val db = this.writableDatabase
         val contentValues = ContentValues()
-        contentValues.put(COL_2, entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
+        contentValues.put(
+            COL_2,
+            entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000
+        )
         contentValues.put(COL_3, entry.mDurationSeconds)
         contentValues.put(COL_4, if (entry.sessionID != null) entry.sessionID else -1)
         contentValues.put(COL_5, entry.name)
@@ -88,7 +90,10 @@ class DungeonVisitDatabaseHelper(context: Context) :
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_1, id)
-        contentValues.put(COL_2, entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000)
+        contentValues.put(
+            COL_2,
+            entry.mStarted.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000
+        )
         contentValues.put(COL_3, entry.mDurationSeconds)
         contentValues.put(COL_4, if (entry.sessionID != null) entry.sessionID else -1)
         contentValues.put(COL_5, entry.name)
@@ -148,7 +153,8 @@ class DungeonVisitDatabaseHelper(context: Context) :
             val mode = DungeonMode(DungeonMode.Modes.valueOf(type))
             mode.mbHard = hard
             val visit = DungeonVisit(sessionId, name, mode)
-            visit.mStarted = LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
+            visit.mStarted =
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(started), ZoneId.systemDefault())
             visit.mDurationSeconds = duration
             visit.orns = orns
             visit.gold = gold
@@ -184,11 +190,11 @@ class DungeonVisitDatabaseHelper(context: Context) :
     fun getVisitsForSession(session: Long): ArrayList<DungeonVisit> {
         val db = this.writableDatabase
         return toEntries(
-                db.rawQuery(
-                        "SELECT * FROM $TABLE_NAME " +
-                                "WHERE session='$session' ",
-                        null
-                )
+            db.rawQuery(
+                "SELECT * FROM $TABLE_NAME " +
+                        "WHERE session='$session' ",
+                null
+            )
         )
     }
 

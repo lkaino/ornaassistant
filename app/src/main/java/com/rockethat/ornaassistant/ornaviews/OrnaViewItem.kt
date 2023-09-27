@@ -13,10 +13,14 @@ import androidx.core.view.isVisible
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
-import com.rockethat.ornaassistant.*
+import com.rockethat.ornaassistant.OrnaView
+import com.rockethat.ornaassistant.OrnaViewType
+import com.rockethat.ornaassistant.OrnaViewUpdateType
+import com.rockethat.ornaassistant.ScreenData
+import com.rockethat.ornaassistant.VolleySingleton
+import com.rockethat.ornaassistant.startsWithUppercaseLetter
 import org.json.JSONObject
 import org.json.JSONTokener
-import java.util.ArrayList
 import java.util.Locale
 
 class OrnaViewItem(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
@@ -31,8 +35,7 @@ class OrnaViewItem(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context)
         data: ArrayList<ScreenData>,
         updateResults: (MutableMap<OrnaViewUpdateType, Any?>) -> Unit
     ): Boolean {
-        if (itemName == null)
-        {
+        if (itemName == null) {
             val cleanedData = data
                 .filter { it.name.startsWithUppercaseLetter() }
                 .filterNot { it.name.startsWith("Inventory") }
@@ -141,8 +144,7 @@ class OrnaViewItem(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context)
         val nameData = data.firstOrNull()
         var name = nameData?.name
         nameLocation = nameData?.position
-        if (name!!.contains("You are"))
-        {
+        if (name!!.contains("You are")) {
             name = data[1].name
             nameLocation = data[1].position
         }

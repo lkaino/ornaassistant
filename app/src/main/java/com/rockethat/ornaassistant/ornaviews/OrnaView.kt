@@ -3,8 +3,12 @@ package com.rockethat.ornaassistant
 import android.content.Context
 import android.view.ViewGroup
 import android.view.WindowManager
-import com.rockethat.ornaassistant.ornaviews.*
-import java.util.ArrayList
+import com.rockethat.ornaassistant.ornaviews.OrnaViewDungeonEntry
+import com.rockethat.ornaassistant.ornaviews.OrnaViewInventory
+import com.rockethat.ornaassistant.ornaviews.OrnaViewItem
+import com.rockethat.ornaassistant.ornaviews.OrnaViewKingdomGauntlet
+import com.rockethat.ornaassistant.ornaviews.OrnaViewNotifications
+import com.rockethat.ornaassistant.ornaviews.OrnaViewWayvessel
 
 object OrnaViewFactory {
     fun create(
@@ -30,27 +34,35 @@ object OrnaViewFactory {
             data.any { it.name == "ACQUIRED" } -> {
                 OrnaViewType.ITEM
             }
+
             data.any { it.name == "New" } -> {
                 OrnaViewType.INVENTORY
             }
+
             data.any { it.name == "Notifications" } -> {
                 OrnaViewType.NOTIFICATIONS
             }
+
             data.any { it.name.lowercase().contains("this wayvessel is active") } -> {
                 OrnaViewType.WAYVESSEL
             }
+
             data.any { it.name.lowercase().contains("special dungeon") } -> {
                 OrnaViewType.DUNGEON_ENTRY
             }
+
             data.any { it.name.lowercase().contains("world dungeon") } -> {
                 OrnaViewType.DUNGEON_ENTRY
             }
+
             data.any { it.name.lowercase().contains("losses:") } -> {
                 OrnaViewType.KINGDOM_GAUNTLET
             }
-            data.any {it.name.startsWith("Battle a series of opponents")} -> {
+
+            data.any { it.name.startsWith("Battle a series of opponents") } -> {
                 OrnaViewType.DUNGEON_ENTRY
             }
+
             else -> {
                 null
             }

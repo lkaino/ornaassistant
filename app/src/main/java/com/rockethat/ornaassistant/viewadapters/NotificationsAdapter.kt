@@ -14,7 +14,8 @@ class NotificationsAdapter(
     private val itemClickListener: () -> Unit
 ) : RecyclerView.Adapter<NotificationsAdapter.ViewHolder>() {
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
         }

@@ -7,7 +7,6 @@ import com.rockethat.ornaassistant.OrnaView
 import com.rockethat.ornaassistant.OrnaViewType
 import com.rockethat.ornaassistant.OrnaViewUpdateType
 import com.rockethat.ornaassistant.ScreenData
-import java.util.ArrayList
 
 class OrnaViewNotifications(data: ArrayList<ScreenData>, wm: WindowManager, ctx: Context) :
     OrnaView(OrnaViewType.NOTIFICATIONS, wm, ctx) {

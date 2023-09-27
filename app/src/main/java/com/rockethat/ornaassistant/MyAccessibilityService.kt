@@ -2,21 +2,15 @@ package com.rockethat.ornaassistant
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
-import android.util.Log
-import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
-import android.view.WindowManager
 import android.graphics.Rect
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.WindowManager
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
-import kotlin.collections.ArrayList
 import kotlin.system.measureTimeMillis
-import android.net.Uri
-import androidx.core.app.ActivityCompat.startActivityForResult
-
-import android.content.Intent
-import androidx.core.app.ActivityCompat
 
 
 class MyAccessibilityService() : AccessibilityService() {
@@ -106,8 +100,7 @@ class MyAccessibilityService() : AccessibilityService() {
     ): Boolean {
         var done = false
         if (mNodeInfo == null) return done
-        if (depth > 250)
-        {
+        if (depth > 250) {
             return true
         }
 

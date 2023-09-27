@@ -1,10 +1,10 @@
 package com.rockethat.ornaassistant.ui.fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
-import com.rockethat.ornaassistant.R
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import android.content.SharedPreferences
+import com.rockethat.ornaassistant.R
 
 class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

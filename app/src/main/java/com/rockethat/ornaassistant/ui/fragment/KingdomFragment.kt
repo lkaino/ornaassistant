@@ -6,13 +6,13 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rockethat.ornaassistant.KingdomMember
@@ -20,8 +20,8 @@ import com.rockethat.ornaassistant.R
 import com.rockethat.ornaassistant.db.KingdomGauntletDatabaseHelper
 import com.rockethat.ornaassistant.ui.viewadapters.KingdomSeenAdapter
 import com.rockethat.ornaassistant.ui.viewadapters.KingdomSeenItem
-import org.json.JSONTokener
 import org.json.JSONObject
+import org.json.JSONTokener
 import java.time.LocalDateTime
 
 // TODO: Rename parameter arguments, choose names that match
