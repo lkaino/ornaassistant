@@ -2,15 +2,26 @@
     <!-- Base application theme. -->
     <style name="Theme.Ornaassistant" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#ff6d00</item>
-        <item name="colorPrimaryVariant">#c43c00</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimary">#FF9800</item> <!-- A more muted orange -->
+        <item name="colorPrimaryVariant">#F57C00</item> <!-- A darker shade for variant -->
+        <item name="colorOnPrimary">@android:color/white</item> <!-- White for text/icons on primary color -->
+
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#ef6c00</item>
-        <item name="colorSecondaryVariant">#b53d00</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">#FFCC80</item> <!-- A lighter, less saturated orange -->
+        <item name="colorSecondaryVariant">#FFB74D</item> <!-- A slightly darker shade for variant -->
+        <item name="colorOnSecondary">@android:color/black</item> <!-- Black for text/icons on secondary color -->
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/black</item> <!-- Black background -->
+        <item name="android:colorBackground">@color/black</item> <!-- Black background -->
+
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@android:color/white</item> <!-- Primary text color -->
+        <item name="android:textColorSecondary">#DEFFFFFF</item> <!-- Secondary text color, slightly muted white -->
+
         <!-- Customize your theme here. -->
     </style>
 </resources>

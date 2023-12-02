@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pager: ViewPager2
     private lateinit var adapter: FragmentAdapter
     private val TAG = "OrnaMainActivity"
-    private val ACCESSIBILITY_SERVICE_NAME = "laukas service"
+    private val ACCESSIBILITY_SERVICE_NAME = "Orna Assistant"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!isAccessibilityEnabled())
         {
-            //startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
         when (tableLayout.selectedTabPosition) {
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         }
         val mStringColonSplitter = SimpleStringSplitter(':')
         if (accessibilityEnabled == 1) {
-            Log.d(TAG, "***ACCESSIBILIY IS ENABLED***: ")
+            Log.d(TAG, "***ACCESSIBILITY IS ENABLED***: ")
             val settingValue: String = Settings.Secure.getString(
                 contentResolver,
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
             }
             Log.d(TAG, "***END***")
         } else {
-            Log.d(TAG, "***ACCESSIBILIY IS DISABLED***")
+            Log.d(TAG, "***ACCESSIBILITY IS DISABLED***")
         }
         return accessibilityFound
     }
