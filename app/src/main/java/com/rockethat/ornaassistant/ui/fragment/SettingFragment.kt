@@ -8,19 +8,15 @@ import androidx.preference.PreferenceManager
 import android.content.SharedPreferences
 
 
-
-
 class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
 
-
-
-        val prefs = PreferenceManager.getDefaultSharedPreferences(
-            context
-        )
-        val editor: SharedPreferences.Editor = prefs.edit()
-        editor.putBoolean("PREF_NAME", false)
-        editor.commit()
+        context?.let { nonNullContext ->
+            val prefs = PreferenceManager.getDefaultSharedPreferences(nonNullContext)
+            val editor: SharedPreferences.Editor = prefs.edit()
+            editor.putBoolean("PREF_NAME", false)
+            editor.commit()
+        }
     }
 }
