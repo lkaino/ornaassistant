@@ -16,13 +16,10 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
-        flatDir {
-            dirs 'libs'
-        }
+        mavenCentral()
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

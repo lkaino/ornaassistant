@@ -10,7 +10,7 @@ android {
         applicationId "com.rockethat.ornaassistant"
         minSdk 31
         versionCode 17
-        versionName "1.1.17"
+        versionName "1.1.18b"
         resValue "string", "app_version", "\"Version " + versionName + "\""
         namespace "com.rockethat.ornaassistant"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -45,7 +45,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.work:work-runtime-ktx:2.9.0'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation "com.squareup.moshi:moshi-kotlin:1.15.0"
