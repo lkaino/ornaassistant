@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pager: ViewPager2
     private lateinit var adapter: FragmentAdapter
     private val TAG = "OrnaMainActivity"
-    private val ACCESSIBILITY_SERVICE_NAME = "Orna Assistant"
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,9 +1,9 @@
-package com.rockethat.ornaassistant
+package com.rockethat.ornaassistant.ornaviews
 
 import android.content.Context
 import android.view.ViewGroup
 import android.view.WindowManager
-import com.rockethat.ornaassistant.ornaviews.*
+import com.rockethat.ornaassistant.ScreenData
 import java.util.ArrayList
 
 object OrnaViewFactory {

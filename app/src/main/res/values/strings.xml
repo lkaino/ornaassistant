@@ -1,9 +1,7 @@
 <resources>
-    <string name="app_name">ornaassistant</string>
-    <string name="accessibility_service_label">laukas service</string>
+    <string name="app_name">Orna assistant</string>
+    <string name="accessibility_service_label">Orna assistant</string>
     <string name="accessibility_service_description">Orna reader</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
