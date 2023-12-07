@@ -1,5 +1,8 @@
 package com.rockethat.ornaassistant
 
+import android.content.Context
+import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,23 +13,49 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @Composable
-fun CustomModalDrawer() {
+fun CustomModalDrawer(context: Context) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val items = listOf("Home", "Profile", "Settings")
+    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
+    val items = listOf("Dungeon Visits", "Kingdom", "Orna hub", "Settings")
 
     ModalDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            DrawerContent(items = items, onItemClicked = { /* Handle click */ })
+            DrawerContent(items = items) { selectedItem ->
+                handleNavigation(selectedItem, context)
+                coroutineScope.launch {
+                    drawerState.close() // Use the coroutine scope here
+                }
+            }
         }
     ) {
         MainContent(drawerState = drawerState)
+    }
+}
+
+private fun handleNavigation(item: String, context: Context) {
+    when (item) {
+        "Dungeon Visits" -> {
+            // If MainActivity is already open, you might not need to do anything
+        }
+        "Kingdom" -> {
+            // Start Activity or navigate to Fragment for Kingdom
+            // Example: context.startActivity(Intent(context, KingdomActivity::class.java))
+        }
+        "Orna hub" -> {
+            // Start Activity or navigate to Fragment for Orna Hub
+            // Example: context.startActivity(Intent(context, OrnaHubActivity::class.java))
+        }
+        "Settings" -> {
+            context.startActivity(Intent(context, SettingsActivity::class.java))
+        }
     }
 }
 
@@ -37,7 +66,8 @@ fun DrawerContent(items: List<String>, onItemClicked: (String) -> Unit) {
             text = item,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .clickable { onItemClicked(item) },
             color = Color.Black
         )
     }
@@ -59,8 +89,9 @@ fun MainContent(drawerState: DrawerState) {
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    CustomModalDrawer()
+    CustomModalDrawer(LocalContext.current)
 }
