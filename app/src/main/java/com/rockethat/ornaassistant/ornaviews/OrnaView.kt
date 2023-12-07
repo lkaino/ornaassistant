@@ -21,6 +21,7 @@ object OrnaViewFactory {
             OrnaViewType.DUNGEON_ENTRY -> OrnaViewDungeonEntry(data, wm, ctx)
             OrnaViewType.INVENTORY -> OrnaViewInventory(data, wm, ctx)
             null -> null
+            OrnaViewType.KINGDOM_GAUNTLET -> TODO()
         }
     }
 
@@ -55,7 +56,7 @@ object OrnaViewFactory {
 }
 
 enum class OrnaViewType {
-    INVENTORY, ITEM, WAYVESSEL, NOTIFICATIONS, DUNGEON_ENTRY
+    INVENTORY, ITEM, WAYVESSEL, NOTIFICATIONS, DUNGEON_ENTRY, KINGDOM_GAUNTLET
 }
 
 enum class OrnaViewUpdateType {
@@ -64,7 +65,8 @@ enum class OrnaViewUpdateType {
 
     DUNGEON_MODE_CHANGED, DUNGEON_NEW_DUNGEON, DUNGEON_ENTERED, DUNGEON_GODFORGE, DUNGEON_DONE, DUNGEON_FAIL, DUNGEON_NEW_FLOOR, DUNGEON_EXPERIENCE, DUNGEON_ORNS, DUNGEON_GOLD,
 
-    ITEM_ASSESS_RESULTS
+    ITEM_ASSESS_RESULTS,
+    KINGDOM_GAUNTLET_LIST
 
 }
 

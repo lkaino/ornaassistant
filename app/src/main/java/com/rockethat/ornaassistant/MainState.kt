@@ -304,6 +304,8 @@ class MainState(
                 OrnaViewUpdateType.ITEM_ASSESS_RESULTS -> {
                     mAssessOverlay.update(data as JSONObject)
                 }
+
+                OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST -> TODO()
             }
         }
 

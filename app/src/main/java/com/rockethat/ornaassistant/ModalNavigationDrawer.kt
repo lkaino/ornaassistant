@@ -46,12 +46,11 @@ private fun handleNavigation(item: String, context: Context) {
             // If MainActivity is already open, you might not need to do anything
         }
         "Kingdom" -> {
-            // Start Activity or navigate to Fragment for Kingdom
-            // Example: context.startActivity(Intent(context, KingdomActivity::class.java))
+            context.startActivity(Intent(context, KingdomActivity::class.java))
+
         }
         "Orna hub" -> {
-            // Start Activity or navigate to Fragment for Orna Hub
-            // Example: context.startActivity(Intent(context, OrnaHubActivity::class.java))
+            context.startActivity(Intent(context, OrnaHubActivity::class.java))
         }
         "Settings" -> {
             context.startActivity(Intent(context, SettingsActivity::class.java))
