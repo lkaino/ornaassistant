@@ -7,9 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.MainFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
-
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
@@ -47,16 +44,5 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <Button
-        android:id="@+id/allowPermission"
-        android:layout_width="220dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="16dp"
-        android:text="Allow permission"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

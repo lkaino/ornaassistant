@@ -3,19 +3,16 @@ package com.rockethat.ornaassistant
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
+import androidx.compose.ui.platform.ComposeView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.rockethat.ornaassistant.ui.fragment.FragmentAdapter
 import com.rockethat.ornaassistant.ui.fragment.MainFragment
-import androidx.compose.ui.platform.ComposeView
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
@@ -88,39 +85,5 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onResume() {
-        super.onResume()
-        if (!isAccessibilityEnabled()) {
-            Log.d(TAG, "Accessibility is disabled")
-        }
-    }
 
-    private fun isAccessibilityEnabled(): Boolean {
-        val accessibilityEnabled = try {
-            Settings.Secure.getInt(contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED)
-        } catch (e: Settings.SettingNotFoundException) {
-            Log.d(TAG, "Error finding setting, default accessibility to not found: ${e.message}")
-            return false
-        }
-
-        if (accessibilityEnabled == 1) {
-            val settingValue = Settings.Secure.getString(
-                contentResolver,
-                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-            )
-            val mStringColonSplitter = TextUtils.SimpleStringSplitter(':').apply {
-                setString(settingValue)
-            }
-
-            while (mStringColonSplitter.hasNext()) {
-                if (mStringColonSplitter.next().contains(packageName, ignoreCase = true)) {
-                    Log.d(TAG, "Accessibility service is enabled.")
-                    return true
-                }
-            }
-        }
-        Log.d(TAG, "Accessibility service is disabled.")
-        return false
-    }
 }

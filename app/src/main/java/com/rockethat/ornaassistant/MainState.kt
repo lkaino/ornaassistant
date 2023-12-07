@@ -95,10 +95,7 @@ class MainState(
         thread {
             while (true) {
                 val data: ArrayList<ScreenData>? = mOrnaQueue.take()
-
-                if (data != null) {
-                    handleOrnaData(data)
-                }
+                data?.let { handleOrnaData(it) }
             }
         }
     }

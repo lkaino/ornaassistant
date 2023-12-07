@@ -22,4 +22,25 @@
             android:summary="Notification when wayvessel cooldown period has passed."
             android:title="Wayvessel notification" />
     </PreferenceCategory>
+
+    <Preference
+        android:key="enable_notifications"
+        android:title="Enable Notification Service"
+        android:summary="Tap to enable notifications for this app." />
+
+    <Preference
+        android:key="enable_accessibility_service"
+        android:title="Enable Accessibility Service"
+        android:summary="Tap to enable the Accessibility Service for additional features."/>
+
+
+    <ListPreference
+        android:key="theme_preference"
+        android:title="Theme"
+        android:summary="Select the app theme"
+        android:entries="@array/theme_options"
+        android:entryValues="@array/theme_values"
+        android:defaultValue="device" />
+
+
 </PreferenceScreen>

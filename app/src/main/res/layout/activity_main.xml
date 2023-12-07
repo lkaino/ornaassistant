@@ -22,6 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         style="@style/Widget.Material3.TabLayout">
+
     </com.google.android.material.tabs.TabLayout>
 
     <!-- Wrapping view pager into constraint layout to make it use maximum height for each page. -->
