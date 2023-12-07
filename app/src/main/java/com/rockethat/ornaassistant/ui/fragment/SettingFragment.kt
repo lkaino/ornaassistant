@@ -14,13 +14,11 @@ class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
 
-
-
         val prefs = PreferenceManager.getDefaultSharedPreferences(
-            context
+            requireContext()
         )
         val editor: SharedPreferences.Editor = prefs.edit()
         editor.putBoolean("PREF_NAME", false)
-        editor.commit()
+        editor.apply()
     }
 }
