@@ -54,12 +54,14 @@ class MainFragment : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
-            if (context != null) {
-                mDb = DungeonVisitDatabaseHelper(requireContext())
-                mSharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
-            }
+        }
+        if (context != null) {
+            // Initialize mDb and mSharedPreference here
+            mDb = DungeonVisitDatabaseHelper(requireContext())
+            mSharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -81,10 +83,11 @@ class MainFragment : Fragment() {
             val intent = Intent(Intent.ACTION_VIEW, uri)
             startActivity(intent)
         }
+        // Call drawWeeklyChart here, after mDb has been initialized
+        if (::mDb.isInitialized) {
+            drawWeeklyChart(view)
+        }
 
-        drawWeeklyChart(view)
-
-        // Inflate the layout for this fragment
         return view
     }
 
