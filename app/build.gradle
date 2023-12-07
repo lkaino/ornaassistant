@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.rockethat.ornaassistant"
-        minSdk 24
-        targetSdk 31
+        minSdk 32
+        targetSdk 33
         versionCode 2
         versionName "1.0.1"
 
@@ -33,6 +33,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.rockethat.ornaassistant'
 }
 
 sourceSets {
