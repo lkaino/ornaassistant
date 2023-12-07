@@ -78,7 +78,7 @@ fun MainContent(drawerState: DrawerState) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Your main content goes here
-        Text(text = "Main Content")
+        Text(text = "")
         IconButton(onClick = {
             coroutineScope.launch {
                 drawerState.open()
