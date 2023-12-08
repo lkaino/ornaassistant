@@ -28,11 +28,13 @@
         android:title="Enable Notification Service"
         android:summary="Tap to enable notifications for this app." />
 
+    <PreferenceCategory
+        android:title="Misc">
+
     <Preference
         android:key="enable_accessibility_service"
         android:title="Enable Accessibility Service"
         android:summary="Tap to enable the Accessibility Service for additional features."/>
-
 
     <ListPreference
         android:key="theme_preference"
@@ -42,5 +44,6 @@
         android:entryValues="@array/theme_values"
         android:defaultValue="device" />
 
+</PreferenceCategory>
 
 </PreferenceScreen>
