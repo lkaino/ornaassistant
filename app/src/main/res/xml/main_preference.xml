@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="enable_notifications"
+        android:title="Enable Notification Service"
+        android:summary="Tap to enable notifications for this app." />
+
     <PreferenceCategory
-        android:title="Overlays">
+        android:title="Misc">
+
+    <Preference
+        android:key="enable_accessibility_service"
+        android:title="Enable Accessibility Service"
+        android:summary="Tap to enable the Accessibility Service for additional features."/>
+
+    <ListPreference
+        android:key="theme_preference"
+        android:title="Theme"
+        android:summary="Select the app theme"
+        android:entries="@array/theme_options"
+        android:entryValues="@array/theme_values"
+        android:defaultValue="device" />
+
         <CheckBoxPreference
-        android:key="session"
-        android:summary="Session overlay shows statistics of earned orns and gold when in a dungeon or at a wayvessel."
-        android:title="Dungeon / Wayvessel session overlay" />
-    <CheckBoxPreference
-        android:key="invites"
-        android:summary="Show an overlay in the Notifications view.\nThe overlay shows the current party invites with information about the amount of dungeons and their cooldowns based on your last visit at the inviter's wayvessel."
-        android:title="Invites overlay" />
-    <CheckBoxPreference
-        android:key="assess"
-        android:summary="Automatically assess items opened in inventory view."
-        android:title="Item assess overlay" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:title="Notifications">
-        <CheckBoxPreference
-            android:key="nWayvessel"
-            android:summary="Notification when wayvessel cooldown period has passed."
-            android:title="Wayvessel notification" />
-    </PreferenceCategory>
+            android:key="enable_persistent_notification"
+            android:title="Persistent Notification"
+            android:summary="Persistent Notification that app is running." />
+
+
+</PreferenceCategory>
+
 </PreferenceScreen>

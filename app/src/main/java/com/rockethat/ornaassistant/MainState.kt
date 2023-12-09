@@ -95,10 +95,7 @@ class MainState(
         thread {
             while (true) {
                 val data: ArrayList<ScreenData>? = mOrnaQueue.take()
-
-                if (data != null) {
-                    handleOrnaData(data)
-                }
+                data?.let { handleOrnaData(it) }
             }
         }
     }
@@ -304,6 +301,8 @@ class MainState(
                 OrnaViewUpdateType.ITEM_ASSESS_RESULTS -> {
                     mAssessOverlay.update(data as JSONObject)
                 }
+
+                OrnaViewUpdateType.KINGDOM_GAUNTLET_LIST -> TODO()
             }
         }
 

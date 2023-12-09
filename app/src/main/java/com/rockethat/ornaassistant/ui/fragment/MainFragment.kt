@@ -27,6 +27,7 @@ import android.content.res.Resources.Theme
 import android.net.Uri
 
 import android.util.TypedValue
+import androidx.databinding.DataBindingUtil.setContentView
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
 import com.rockethat.ornaassistant.DungeonVisit
@@ -55,8 +56,10 @@ class MainFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        mDb = DungeonVisitDatabaseHelper(context as Context)
-        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(context)
+
+        // Initialize mDb and mSharedPreference here
+        mDb = DungeonVisitDatabaseHelper(requireContext())
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -64,25 +67,16 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: View = inflater.inflate(R.layout.fragment_main, container, false)
-        val allowPermission: Button = view.findViewById(R.id.allowPermission)
-        val donate: Button = view.findViewById(R.id.donate)
-
-        allowPermission.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
-
-        donate.setOnClickListener {
-            val uri: Uri =
-                Uri.parse("https://www.paypal.com/donate/?business=L7Q94HMXMHA5A&no_recurring=0&item_name=Orna+assistant+development&currency_code=EUR") // missing 'http://' will cause crashed
-
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
-        }
-
-        drawWeeklyChart(view)
-
         // Inflate the layout for this fragment
+        val view: View = inflater.inflate(R.layout.fragment_main, container, false)
+
+        // Your existing code for setting up the view
+
+        // Call drawWeeklyChart here, after mDb has been initialized
+        if (::mDb.isInitialized) {
+            drawWeeklyChart(view)
+        }
+
         return view
     }
 
