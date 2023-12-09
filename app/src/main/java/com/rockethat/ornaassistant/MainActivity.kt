@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("App is Running")
                 .setContentText("Tap to open.")
-                .setSmallIcon(R.drawable.ic_notification) // Replace with your app's notification icon
+                .setSmallIcon(R.drawable.ric_notification)
                 .setOngoing(true)
                 .build()
 

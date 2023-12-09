@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">ornaassistant</string>
-    <string name="accessibility_service_label">laukas service</string>
+    <string name="accessibility_service_label">Orna Assistant</string>
     <string name="accessibility_service_description">Orna reader</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -20,8 +19,8 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="action_settings">Settings</string>
     <string name="settings">Settings</string>
-    <string name="channel_name">\"ornaassistant\"</string>
-    <string name="channel_description">ornaassistant notification channel</string>
+    <string name="channel_name">\"Orna Assistant\"</string>
+    <string name="channel_description">Orna Assistant notification channel</string>
 
     <string-array name="theme_options">
         <item>Dark</item>

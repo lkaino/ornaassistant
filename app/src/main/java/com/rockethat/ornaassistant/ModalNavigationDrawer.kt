@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 fun CustomModalDrawer(context: Context) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
-    val items = listOf("Dungeon Visits", "Kingdom", "Orna hub", "Settings")
+    val items = listOf("Dungeon Visits", "Kingdom", "Orna hub", "Orna Guide", "Settings")
 
     ModalDrawer(
         drawerState = drawerState,
@@ -51,6 +51,9 @@ private fun handleNavigation(item: String, context: Context) {
         }
         "Orna hub" -> {
             context.startActivity(Intent(context, OrnaHubActivity::class.java))
+        }
+        "Orna Guide" -> {
+        context.startActivity(Intent(context, OrnaGuideActivity::class.java))
         }
         "Settings" -> {
             context.startActivity(Intent(context, SettingsActivity::class.java))

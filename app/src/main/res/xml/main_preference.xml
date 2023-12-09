@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="Overlays">
-        <CheckBoxPreference
-        android:key="session"
-        android:summary="Session overlay shows statistics of earned orns and gold when in a dungeon or at a wayvessel."
-        android:title="Dungeon / Wayvessel session overlay" />
-    <CheckBoxPreference
-        android:key="invites"
-        android:summary="Show an overlay in the Notifications view.\nThe overlay shows the current party invites with information about the amount of dungeons and their cooldowns based on your last visit at the inviter's wayvessel."
-        android:title="Invites overlay" />
-    <CheckBoxPreference
-        android:key="assess"
-        android:summary="Automatically assess items opened in inventory view."
-        android:title="Item assess overlay" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:title="Notifications">
-        <CheckBoxPreference
-            android:key="nWayvessel"
-            android:summary="Notification when wayvessel cooldown period has passed."
-            android:title="Wayvessel notification" />
-    </PreferenceCategory>
 
     <Preference
         android:key="enable_notifications"
