@@ -1,4 +1,4 @@
-package com.rockethat.ornaassistant.ui.fragment
+package com.lloir.ornaassistant.ui.fragment
 
 import android.content.Intent
 import android.os.Build
@@ -10,7 +10,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.rockethat.ornaassistant.R
+import com.lloir.ornaassistant.R
 
 class SettingFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
